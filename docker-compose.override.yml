@@ -1,0 +1,27 @@
+version: "3.9"
+
+# ローカル環境用の設定
+
+services:
+  app:
+    command: npm run dev
+    environment:
+      NODE_ENV: development
+    build:
+      args:
+        XDEBUG_MODE: "true"
+        SAIL_XDEBUG_CONFIG: "client_host=host.docker.internal"
+    volumes:
+      - ./frontend:/app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - ./env/develop.env # 例
+    networks:
+      - ttnoumap-net
+
+# このネットワークはトトノウMA＋ップのために作成したものです
+networks:
+  ttnoumap-net:
+    external: true
+    driver: bridge
