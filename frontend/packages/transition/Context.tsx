@@ -10,9 +10,11 @@ import React, {
 import { useRouter, usePathname } from "next/navigation";
 import { Cover, DefaultCover } from "./cover/Index";
 import { motion, AnimatePresence } from "framer-motion";
+import * as CoverFirst from "@/packages/transition/cover/First";
 
 type TransitionContextType = {
   isFirstLoad: boolean;
+  setIsFirstLoad: (v: boolean) => void;
   isTransitioning: boolean;
   setIsTransitioning: (v: boolean) => void;
   startTransition: (
@@ -25,6 +27,7 @@ type TransitionContextType = {
 
 const TransitionContext = createContext<TransitionContextType>({
   isFirstLoad: true,
+  setIsFirstLoad: () => {},
   isTransitioning: false,
   setIsTransitioning: () => {},
   startTransition: () => {},
@@ -46,13 +49,17 @@ export function TransitionProvider({
   const [duration, setDuration] = useState(1.0);
 
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  // 初回ロード時に一度カバーを出す
   useEffect(() => {
-    // 初回レンダリングが終わったらフラグを落とす
+    if (!isFirstLoad) return;
+
     const timer = setTimeout(() => {
       setIsFirstLoad(false);
-    }, 600); // 0.6sくらい待って消す（お好みで）
+    }, 600);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [isFirstLoad]);
 
   const startTransition = useCallback(
     (
@@ -76,6 +83,7 @@ export function TransitionProvider({
     <TransitionContext.Provider
       value={{
         isFirstLoad,
+        setIsFirstLoad,
         isTransitioning,
         setIsTransitioning,
         startTransition,
@@ -104,6 +112,7 @@ export function TransitionProvider({
         </AnimatePresence>
       </div>
       <Cover />
+      <CoverFirst.default />
     </TransitionContext.Provider>
   );
 }

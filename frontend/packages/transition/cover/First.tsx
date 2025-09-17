@@ -12,13 +12,13 @@ export default function Cover() {
     <AnimatePresence>
       {isFirstLoad && (
         <motion.div
-          key="cover"
-          initial={{ x: "0%" }}
-          animate={{ x: 0 }}
+          key="cover-first"
+          initial={{ x: 0 }} // 👈 ここが重要
           exit={{ x: "-100%" }}
           transition={{ duration, ease: "easeInOut" }} // ← Contextから取得
           style={{
             position: "fixed",
+            left: 0,
             inset: 0,
             background: "black",
             zIndex: 9999,

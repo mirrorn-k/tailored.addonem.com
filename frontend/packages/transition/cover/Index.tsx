@@ -6,14 +6,15 @@ import { Box } from "@mui/material";
 import { useTransition } from "../Context";
 
 export function Cover() {
-  const { isTransitioning, coverContent, duration } = useTransition();
+  const { isTransitioning, isFirstLoad, coverContent, duration } =
+    useTransition();
 
   return (
     <AnimatePresence>
       {isTransitioning && (
         <motion.div
-          key="cover"
-          initial={{ x: "100%" }}
+          key="cover-index"
+          initial={isFirstLoad ? { x: "0%" } : { x: "100%" }}
           animate={{ x: 0 }}
           exit={{ x: "-100%" }}
           transition={{ duration, ease: "easeInOut" }} // ← Contextから取得

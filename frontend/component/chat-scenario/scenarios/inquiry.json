@@ -1,0 +1,64 @@
+[
+  {
+    "id": "start",
+    "type": "message",
+    "text": "こんにちは！お問い合わせありがとうございます。",
+    "nextId": "q1"
+  },
+  {
+    "id": "q1",
+    "type": "select",
+    "text": "現在のお困りごと、または興味のあることをすべてお選びください",
+    "options": [
+      "Webサイトを新しく作りたい",
+      "既存サイトのリニューアルを検討している",
+      "DTP（名刺・パンフレットなど）をお願いしたい",
+      "写真撮影を依頼したい",
+      "マーケティングや集客について相談したい",
+      "その他"
+    ],
+    "nextId": "branch1"
+  },
+  {
+    "id": "branch1",
+    "type": "branch",
+    "conditions": [
+      {
+        "if": { "selectedCount": { "op": "==", "value": 1 } },
+        "nextId": "onlyOne"
+      },
+      {
+        "if": { "selectedCount": { "op": ">=", "value": 2 } },
+        "nextId": "multiple"
+      },
+      {
+        "if": { "includes": "その他" },
+        "nextId": "freeInput"
+      }
+    ],
+    "defaultNextId": "end"
+  },
+  {
+    "id": "onlyOne",
+    "type": "message",
+    "text": "1つだけお選びいただきましたね！",
+    "nextId": "end"
+  },
+  {
+    "id": "multiple",
+    "type": "message",
+    "text": "複数の項目をお選びいただきましたね！",
+    "nextId": "end"
+  },
+  {
+    "id": "freeInput",
+    "type": "input",
+    "text": "ご自由にお問い合わせ内容を入力してください",
+    "nextId": "end"
+  },
+  {
+    "id": "end",
+    "type": "message",
+    "text": "ありがとうございました！担当者から折り返しご連絡いたします。"
+  }
+]

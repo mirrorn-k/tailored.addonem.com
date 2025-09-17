@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type CronLike = string | string[];
 
-type ShowAtTimeProps = {
+export type ShowAtTimeProps = {
   startAt?: string | Date;
   endAt?: string | Date;
   /** フィールド順: 「日 曜 時 分 秒」 例: "* * 12 0 0" */

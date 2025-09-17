@@ -1,4 +1,4 @@
-import arrayReducer from "./array";
+import arrayReducer, { findIndexInArray } from "./array";
 import { keyedObjectReducer, objectReducer } from "./reducer";
 import { useReducer } from "react";
 import { tKeyedObjectReturn } from "./type";
@@ -14,6 +14,8 @@ export const useArrayList = <T>(initialState: T[] = []) => {
       dispatch({ type: "UPDATE", index, item }),
     removeItem: (index: number) => dispatch({ type: "REMOVE", index }),
     clearList: () => dispatch({ type: "CLEAR" }),
+    find: (item: T) => findIndexInArray(state, item),
+    switch: (item: T) => dispatch({ type: "SWITCH", item }),
   };
 };
 

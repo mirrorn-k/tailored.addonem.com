@@ -1,10 +1,9 @@
 "use client";
-
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useTransition } from "@/packages/transition/Context";
 
-export default function Template({ children }: { children: React.ReactNode }) {
+export const Template = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { isTransitioning, setIsTransitioning, setIsFirstLoad } =
     useTransition();
@@ -18,4 +17,4 @@ export default function Template({ children }: { children: React.ReactNode }) {
   }, [pathname]); // ← pathname が変わった瞬間に走る
 
   return <>{children}</>;
-}
+};

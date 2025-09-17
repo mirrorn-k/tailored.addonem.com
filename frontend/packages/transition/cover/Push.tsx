@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTransition } from "../Context";
 
 export function PushCover() {
-  const { isTransitioning, duration } = useTransition();
+  const { isTransitioning, coverContent, duration } = useTransition();
 
   return (
     <AnimatePresence>
@@ -21,7 +21,10 @@ export function PushCover() {
             background: "black",
             zIndex: 9999,
           }}
-        />
+        >
+          {/* カバーの内容 */}
+          push{coverContent}
+        </motion.div>
       )}
     </AnimatePresence>
   );

@@ -4,8 +4,8 @@ import React from "react";
 import { Box, Avatar, Paper, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-type Align = "left" | "right";
-type Shape = "circle" | "rounded" | "square";
+export type Align = "left" | "right";
+export type Shape = "circle" | "rounded" | "square";
 
 type Props = {
   imageSrc: string;
@@ -31,7 +31,7 @@ type Props = {
   roundedRadius?: number; // shape="rounded" の角丸(px)
 };
 
-export default function SpeechBubble({
+export default function Main({
   imageSrc,
   name,
   message,
@@ -113,6 +113,9 @@ export default function SpeechBubble({
           "--bubble-bg": bg,
           bgcolor: "var(--bubble-bg)",
           "&:after": isLeft ? tailLeft : tailRight,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
         }}
       >
         {name && (
@@ -124,11 +127,9 @@ export default function SpeechBubble({
           </Typography>
         )}
 
-        {children ? (
-          <Box>{children}</Box>
-        ) : (
-          message && <Typography variant="body1">{message}</Typography>
-        )}
+        {message && <Typography variant="body1">{message}</Typography>}
+
+        {children && <Box>{children}</Box>}
       </Paper>
     </Box>
   );

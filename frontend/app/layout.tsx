@@ -3,6 +3,7 @@
 import React from "react";
 import { TransitionProvider } from "@/packages/transition/Context";
 import ThemeBase from "@/theme/base";
+import * as ContextChatScenario from "@/packages/ui/components/chat-scenario/Context";
 
 const DURATION = 1.2;
 
@@ -15,7 +16,11 @@ export default function RootLayout({
     <html lang="jp">
       <ThemeBase>
         <body>
-          <TransitionProvider>{children}</TransitionProvider>
+          <TransitionProvider>
+            <ContextChatScenario.Provider>
+              {children}
+            </ContextChatScenario.Provider>
+          </TransitionProvider>
         </body>
       </ThemeBase>
     </html>
