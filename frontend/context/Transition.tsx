@@ -9,8 +9,6 @@ import React, {
   useEffect,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
-import { Box } from "@mui/material";
 import CoverSelecter from "@/atom/cover/Index";
 import { tCoverState, Dir, Phase } from "@/atom/cover/type";
 
@@ -69,24 +67,6 @@ export function TransitionProvider({
 
   const [coverState, setCoverState] = useState<tCoverState | null>(null);
   const [displayTime, setDisplayTime] = useState<number>(1);
-
-  /* =========================
-   * axis / direction
-   * ========================= */
-
-  const axis = nextDir === "up" || nextDir === "down" ? "y" : "x";
-
-  const pageExit =
-    nextDir === "left"
-      ? "100%"
-      : nextDir === "right"
-      ? "-100%"
-      : nextDir === "up"
-      ? "100%"
-      : "-100%";
-
-  const pageEnter =
-    typeof pageExit === "string" && pageExit.startsWith("-") ? "100%" : "-100%";
 
   /* =========================
    * startTransition
@@ -173,48 +153,33 @@ export function TransitionProvider({
     };
   }, [phase]);
 
+  /**
+   * ブラウザバックなどで変わった時の対応
+   */
+  useEffect(() => {
+    // 初回マウント時に first フェーズをセット
+    if (phase === "idle") {
+      setPhase("first");
+    }
+  }, [pathname]);
+
   /* =========================
    * Render
    * ========================= */
 
   return (
     <TransitionContext.Provider value={value}>
-      <Box
-        sx={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}
-      >
-        {/* ========= ページ ========= */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pathname}
-            initial={{
-              [axis]: phase === "cover-out" ? pageEnter : 0,
-            }}
-            animate={{
-              [axis]: phase === "cover-in" ? pageExit : 0,
-            }}
-            transition={{ duration, ease: "easeInOut" }}
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* ========= カバー ========= */}
-        <CoverSelecter
-          phase={phase}
-          duration={duration}
-          state={coverState}
-          onCoverOutComplete={() => {
-            setPhase("idle");
-            setCoverState(null);
-          }}
-        />
-      </Box>
+      {children}
+      {/* ========= カバー ========= */}
+      <CoverSelecter
+        phase={phase}
+        duration={duration}
+        state={coverState}
+        onCoverOutComplete={() => {
+          setPhase("idle");
+          setCoverState(null);
+        }}
+      />
     </TransitionContext.Provider>
   );
 }
