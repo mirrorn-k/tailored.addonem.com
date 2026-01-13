@@ -1,7 +1,5 @@
 "use client";
-import ShowAtTime, {
-  ShowAtTimeProps,
-} from "@/packages/ui/components/timed/ShowAtTime";
+import ShowAtTime, { ShowAtTimeProps } from "@/atom/timed/ShowAtTime";
 
 type Props = {
   cron?: ShowAtTimeProps["cron"];

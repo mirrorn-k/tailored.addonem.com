@@ -1,17 +1,15 @@
 "use client";
 
 import React from "react";
-import type {
-  ScenarioNode,
-  ChoiceOption,
-} from "@/packages/ui/components/chat-scenario/type";
-import * as Options from "@/packages/ui/components/chat-scenario/Options";
-import { useContexts as ContextChat } from "@/packages/ui/components/chat-scenario/Context";
-import ChatBubble from "@/packages/ui/components/chat-scenario/ChatBubble";
-import { useTransition } from "@/packages/transition/Context";
+import type { ScenarioNode, ChoiceOption } from "@/atom/chat-scenario/type";
+import * as Options from "@/atom/chat-scenario/Options";
+import { useContexts as ContextChat } from "@/atom/chat-scenario/Context";
+import ChatBubble from "@/atom/chat-scenario/ChatBubble";
+
+import { useRouter } from "next/navigation";
 
 const Main = ({ node }: { node: ScenarioNode }) => {
-  const { startTransition } = useTransition();
+  const router = useRouter();
 
   const { admin, goNext } = ContextChat();
   return (
@@ -27,7 +25,7 @@ const Main = ({ node }: { node: ScenarioNode }) => {
         <Options.Text
           onSubmit={(arg: string) => {
             goNext(arg, node.id);
-            startTransition("/contact");
+            router.push("/contact");
           }}
         />
       )}
@@ -36,7 +34,7 @@ const Main = ({ node }: { node: ScenarioNode }) => {
           options={node.options}
           onSelect={(arg: string[]) => {
             goNext(arg, node.id);
-            startTransition("/contact");
+            router.push("/contact");
           }}
         />
       )}
@@ -45,7 +43,7 @@ const Main = ({ node }: { node: ScenarioNode }) => {
           options={node.options}
           onSelect={(arg: ChoiceOption) => {
             goNext(arg.label, node.id);
-            startTransition("/contact");
+            router.push("/contact");
           }}
         />
       )}

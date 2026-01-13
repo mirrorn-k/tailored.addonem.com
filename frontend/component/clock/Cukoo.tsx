@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { CuckooClock } from "@/packages/ui/components/cuckooClock/Index";
+import { CuckooClock } from "@/atom/cuckooClock/Index";
 
 const Main = () => {
   return (

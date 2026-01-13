@@ -1,6 +1,5 @@
-"use client";
 import { Box } from "@mui/material";
-import ChatArea from "@/packages/ui/components/chat-scenario/ChartErea";
+import ChatArea from "@/atom/chat-scenario/ChartErea";
 
 export default function Main() {
   return (

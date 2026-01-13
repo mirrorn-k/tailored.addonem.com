@@ -6,7 +6,7 @@ build-no-cache:
 	docker compose build --no-cache --parallel
 
 npm-build:
-	docker compose run --rm --entrypoint sh app -c "npm run build"
+	docker compose run --rm --entrypoint sh develop -c "npm run build"
 
 up:
 	docker compose up

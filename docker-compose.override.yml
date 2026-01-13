@@ -3,7 +3,8 @@ version: "3.9"
 # ローカル環境用の設定
 
 services:
-  app:
+  develop:
+    container_name: tempalte_base02_develop
     command: npm run dev
     environment:
       NODE_ENV: development

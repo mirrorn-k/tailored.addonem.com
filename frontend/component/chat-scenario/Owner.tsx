@@ -1,7 +1,6 @@
-import SpeechBubble, {
-  Align,
-} from "@/packages/ui/components/chat-scenario/ChatBubble";
-import * as BubbleOptions from "@/packages/ui/components/chat-scenario/Options";
+import SpeechBubble, { Align } from "@/atom/chat-scenario/ChatBubble";
+import * as BubbleOptions from "@/atom/chat-scenario/Options";
+import { ChoiceOption } from "@/atom/chat-scenario/type";
 
 type Props = {
   src: string;
@@ -36,8 +35,8 @@ const Main = ({
 export default Main;
 
 type choice = Props & {
-  options: string[];
-  onSelect: (arg0: number) => void;
+  options: ChoiceOption[];
+  onSelect: (arg0: ChoiceOption) => void;
   columns?: number;
 };
 

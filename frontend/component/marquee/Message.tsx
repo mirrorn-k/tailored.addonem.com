@@ -1,8 +1,8 @@
 "use client";
 
 import { Box } from "@mui/material";
-import Marquee from "@/packages/ui/components/marquee/Index";
-import MarqueeVertical from "@/packages/ui/components/marquee/Vertical";
+import Marquee from "@/atom/marquee/Index";
+import MarqueeVertical from "@/atom/marquee/Vertical";
 import { useTheme } from "@mui/material/styles";
 
 const MessageBox = () => {

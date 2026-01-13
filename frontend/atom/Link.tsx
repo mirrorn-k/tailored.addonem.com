@@ -1,26 +1,78 @@
 "use client";
-import Link, { LinkProps } from "next/link";
-import React from "react";
-import { useContexts, Dir } from "@/context/Transition";
+import MuiLink from "@mui/material/Link";
+import { Typography, Box } from "@mui/material";
+import ArrowIcon from "@/atom/svg/ArrowIcon";
+import { useTheme } from "@mui/material";
+import styled from "@mui/system/styled";
+import { useTransition } from "@/context/Transition";
 
-type Props = LinkProps & {
+type Props = {
+  href: string;
   children: React.ReactNode;
-  dir?: Dir; // ← この遷移に使いたい方向
-  className?: string;
 };
 
-export default function NavLink({ dir = "up", children, ...rest }: Props) {
-  const { setNextDir } = useContexts();
+export default function Default({ href, children }: Props) {
+  const { startTransition } = useTransition();
+
   return (
-    <Link
-      {...rest}
+    <MuiLink
+      href={href}
       onClick={(e) => {
-        setNextDir(dir);
-        // 既存 onClick があれば呼ぶ
-        if (typeof rest.onClick === "function") rest.onClick(e);
+        e.preventDefault();
+        startTransition(href);
       }}
     >
       {children}
-    </Link>
+    </MuiLink>
   );
 }
+
+interface MainProps {
+  href: string;
+  label: string;
+  props?: React.ComponentPropsWithoutRef<typeof MuiLink>;
+}
+
+export const Main = ({ href, label, props }: MainProps) => {
+  return (
+    <Default href={href}>
+      <Typography
+        sx={{ fontSize: "1.25rem" }}
+        underline="none"
+        {...props}
+        className={"atom-Link-Main"}
+      >
+        {label}
+      </Typography>
+    </Default>
+  );
+};
+
+export const ArrowLink = ({ href, label }: MainProps) => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexFlow: "row nowrap",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        gap: theme.spacing(2),
+      }}
+    >
+      <Main href={href} label={label} />
+      <ArrowIcon length={50} strokeWidth={1} tipAngle={0} tipLength={0} />
+      {/* 直線に変更 */}
+    </Box>
+  );
+};
+
+// リンクを作成するスタイル付きコンポーネント
+export const LinkBox = styled(Default)(({ theme }) => ({
+  textDecoration: "none",
+  color: theme.palette.text.primary,
+  fontWeight: "bold",
+  display: "flex",
+  flexDirection: "column",
+  textAlign: "center",
+}));

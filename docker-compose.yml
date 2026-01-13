@@ -1,10 +1,11 @@
 services:
-  app:
+  develop:
+    container_name: tempalte_base02_develop
     build:
       context: ./frontend
       dockerfile: ../Dockerfile
     ports:
-      - "8252:3000"
+      - "8270:3000"
     environment:
       NODE_ENV: ${NODE_ENV:-production}
     env_file:

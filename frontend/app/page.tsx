@@ -1,7 +1,5 @@
-"use client";
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { SoundUnlockButton } from "@/packages/core/atoms/Button";
 import MarqueeMessage from "@/component/marquee/Message";
 import Notice from "@/component/clock/Notice";
 import CuckooClock from "@/component/clock/Cukoo";
@@ -11,7 +9,6 @@ import CustomBubble from "@/component/chat-scenario/CustomBubble";
 export default function Home() {
   return (
     <Box sx={{ height: "100%", width: "100%" }}>
-      <SoundUnlockButton />
       <Layer01 />
     </Box>
   );
@@ -43,7 +40,6 @@ const Layer01 = () => {
       }}
     >
       <MarqueeMessage />
-
       <Box
         sx={{
           ...sectionStyle,

@@ -1,6 +1,6 @@
 import inquiry from "./inquiry.json";
-import type { ScenarioNode } from "@/packages/ui/components/chat-scenario/type";
-import { createScenarioMap } from "@/packages/ui/components/chat-scenario/index";
+import type { ScenarioNode } from "@/atom/chat-scenario/type";
+import { createScenarioMap } from "@/atom/chat-scenario/index";
 
 // 型アサーションを使い変換
 export const inquiryScenario = inquiry as ScenarioNode[];
