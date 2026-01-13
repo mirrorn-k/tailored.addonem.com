@@ -1,13 +1,19 @@
 services:
   develop:
     container_name: tempalte_base02_develop
+    ports:
+      - "8270:3000"
     build:
       context: ./frontend
       dockerfile: ../Dockerfile
-    ports:
-      - "8270:3000"
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
+    working_dir: /app
     env_file:
-      - ./env/prod.env
+      - ${ENV_FILE:-./env/prod.env}
     command: sh -c "npm run build && npm run start"
+    volumes:
+      # ソースコードはホストと同期
+      - ./frontend:/app
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: "--max-old-space-size=768"
+    mem_limit: 1g

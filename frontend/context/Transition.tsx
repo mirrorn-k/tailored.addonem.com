@@ -12,8 +12,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box } from "@mui/material";
 import CoverSelecter from "@/atom/cover/Index";
-import router from "next/router";
-
+import { useRouter } from "next/navigation";
 /* =========================
  * 型
  * ========================= */
@@ -38,6 +37,9 @@ type TransitionContextType = {
   duration: number;
   setDuration: React.Dispatch<React.SetStateAction<number>>;
 
+  displayTime: number;
+  setDisplayTime: React.Dispatch<React.SetStateAction<number>>;
+
   setCoverState: React.Dispatch<React.SetStateAction<tCoverState | null>>;
 };
 
@@ -52,9 +54,10 @@ export function TransitionProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const [prevPathname, setPrevPathname] = useState<string | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(true);
 
   // 公開する state
   const [nextDir, setNextDir] = useState<Dir>("right");
@@ -63,16 +66,7 @@ export function TransitionProvider({
 
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  // 初回ロード時に一度カバーを出す
-  useEffect(() => {
-    if (!isFirstLoad) return;
-
-    const timer = setTimeout(() => {
-      setIsFirstLoad(false);
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [isFirstLoad]);
+  const [displayTime, setDisplayTime] = useState(1.0);
 
   /* =========================
    * ページ遷移検知（Next/Link）
@@ -134,6 +128,8 @@ export function TransitionProvider({
       setNextDir,
       duration,
       setDuration,
+      displayTime,
+      setDisplayTime,
       coverState,
       setCoverState,
     }),
@@ -141,6 +137,8 @@ export function TransitionProvider({
       startTransition,
       isFirstLoad,
       isTransitioning,
+      displayTime,
+      setDisplayTime,
       nextDir,
       duration,
       coverState,
@@ -150,18 +148,14 @@ export function TransitionProvider({
   return (
     <TransitionContext.Provider value={value}>
       <Box
-        component={"body"}
         sx={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}
       >
         <AnimatePresence mode="wait">
-          <motion.main
+          <motion.div
             key={pathname}
             initial={{ [axis]: 0 }}
             animate={{ [axis]: isTransitioning ? to : 0 }}
             transition={{ duration, ease: "easeInOut" }}
-            onAnimationComplete={() => {
-              setIsTransitioning(false);
-            }}
             style={{
               position: "absolute",
               inset: 0,
@@ -170,7 +164,7 @@ export function TransitionProvider({
             }}
           >
             {children}
-          </motion.main>
+          </motion.div>
         </AnimatePresence>
 
         <CoverSelecter
@@ -178,6 +172,11 @@ export function TransitionProvider({
           state={coverState}
           isActive={isTransitioning}
           duration={duration}
+          displayTime={displayTime}
+          onFinish={() => {
+            setIsFirstLoad(false);
+            setIsTransitioning(false);
+          }}
         />
       </Box>
     </TransitionContext.Provider>

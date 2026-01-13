@@ -12,6 +12,22 @@ export default async function getFetch(
     next: { revalidate: 3600, tags: [TAG_FETCH_KEY] },
   } // デフォルト: 一時間に一回再検証
 ) {
+  /* ============================
+   * ✅ URL 検査（build / runtime 共通）
+   * ============================ */
+  if (!url || typeof url !== "string") {
+    console.warn("[getFetch] skip: url is empty or invalid", url);
+    return null;
+  }
+
+  // ?, undefined?, null? などを確実に弾く
+  try {
+    new URL(url.startsWith("http") ? url : `http://${url}`);
+  } catch {
+    console.warn("[getFetch] skip: invalid url format", url);
+    return null;
+  }
+
   if (!options.next) {
     options.next = { revalidate: 3600, tags: [TAG_FETCH_KEY] };
   }

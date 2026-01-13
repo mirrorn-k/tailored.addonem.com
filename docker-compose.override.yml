@@ -1,28 +1,23 @@
 version: "3.9"
 
-# ローカル環境用の設定
-
-services:
-  develop:
-    container_name: tempalte_base02_develop
-    command: npm run dev
-    environment:
-      NODE_ENV: development
-    build:
-      args:
-        XDEBUG_MODE: "true"
-        SAIL_XDEBUG_CONFIG: "client_host=host.docker.internal"
-    volumes:
-      - ./frontend:/app
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    env_file:
-      - ./env/develop.env # 例
-    networks:
-      - ttnoumap-net
-
 # このネットワークはトトノウMA＋ップのために作成したものです
 networks:
   ttnoumap-net:
     external: true
     driver: bridge
+
+# ローカル環境用の設定
+services:
+  develop:
+    command: npm run dev
+    environment:
+      NODE_ENV: development
+      NODE_OPTIONS: "--max-old-space-size=1024"
+    volumes:
+      - ./frontend:/app
+      #- /app/node_modules
+    env_file:
+      - ${ENV_FILE:-./env/develop.env}
+    networks:
+      - ttnoumap-net
+    mem_limit: 1.5g

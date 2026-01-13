@@ -25,7 +25,7 @@ restart:
 	docker compose restart
 
 setup:
-	docker compose run --rm --entrypoint sh app -c "npm install"
+	docker compose run --rm --entrypoint sh develop -c "npm install"
 	docker compose build --parallel
 #	docker compose up
 

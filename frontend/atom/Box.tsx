@@ -3,8 +3,6 @@ import React from "react";
 import Box, { BoxProps } from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/system";
-import { ReactNode } from "react";
-import useMediaQuery from "@mui/material/useMediaQuery";
 interface ResponsiveBoxProps extends BoxProps {
   maxWidth: "xs" | "sm" | "md" | "lg" | "xl"; // ブレイクポイントを指定
 }
@@ -98,48 +96,3 @@ export const FloatingBox = styled("div")<FloatingBoxProps>(
     overflow: "hidden", // 子要素がボックスを超えないようにする
   })
 );
-
-interface ResponsiveFlexProps extends BoxProps {
-  children: ReactNode[];
-  breakpoint?: "xs" | "sm" | "md" | "lg" | "xl";
-  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
-}
-
-export const ResponsiveFlex: React.FC<ResponsiveFlexProps> = ({
-  children,
-  breakpoint = "lg",
-  maxWidth = "lg",
-  sx,
-  ...rest
-}) => {
-  const theme = useTheme();
-  const isVertical = useMediaQuery(theme.breakpoints.down(breakpoint));
-  const widthPercent = 100 / children.length;
-
-  console.log("isVertical", isVertical);
-  return (
-    <Box
-      display="flex"
-      flexDirection={isVertical ? "column" : "row"}
-      flexWrap="nowrap"
-      width={"100%"}
-      maxWidth={`${theme.breakpoints.values[maxWidth]}px`} // ブレイクポイントの値を取得して設定}
-      height={isVertical ? "auto" : "auto"}
-      sx={sx}
-      gap={2}
-      {...rest}
-    >
-      {children.map((child, idx) => (
-        <Box
-          key={idx}
-          sx={{
-            width: isVertical ? "100%" : `${widthPercent}%`,
-            height: isVertical ? "auto" : "100%", // 横並び時に高さ揃える
-          }}
-        >
-          {child}
-        </Box>
-      ))}
-    </Box>
-  );
-};

@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useState, ReactNode, useContext } from "react";
-import { useTheme } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface DataContextProps {

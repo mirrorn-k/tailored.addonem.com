@@ -3,13 +3,14 @@
 import { useEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import SpeechBubble from "@/atom/chat-scenario/ChatBubble";
-import { useContexts } from "@/atom/chat-scenario/Context";
+import { useChatContexts } from "@/context/Chat";
 import HistoryView from "@/atom/chat-scenario/Histories";
 import * as Options from "@/atom/chat-scenario/Options";
 import type { ChoiceOption } from "@/atom/chat-scenario/type";
 
 export default function Main() {
-  const { currentId, history, node, admin, customer, goNext } = useContexts();
+  const { currentId, history, node, admin, customer, goNext } =
+    useChatContexts();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

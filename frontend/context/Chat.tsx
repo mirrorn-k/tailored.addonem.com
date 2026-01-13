@@ -23,7 +23,7 @@ type ContextValue = {
 
 const Context = createContext<ContextValue | undefined>(undefined);
 
-export const Provider = ({ children }: { children: React.ReactNode }) => {
+export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentId, setCurrentId] = useState("start"); // 最初のノードIDを指定
   const history = useArrayList<BaseNode["id"]>([]); // 最初に start を入れておく
   const answers = useKeyedObject<UserAnswers>({});
@@ -113,7 +113,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useContexts = () => {
+export const useChatContexts = () => {
   const ctx = useContext(Context);
   if (!ctx) {
     throw new Error("useChatScenario must be used within ChatScenarioProvider");

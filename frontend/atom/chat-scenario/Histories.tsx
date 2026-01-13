@@ -4,13 +4,13 @@
 import { Box } from "@mui/material";
 import SpeechBubble from "@/atom/chat-scenario/ChatBubble";
 import { scenarioMap } from "@/component/chat-scenario/scenarios/index";
-import { useContexts } from "@/atom/chat-scenario/Context";
+import { useChatContexts } from "@/context/Chat";
 
 type ViewProps = {
   isBusy?: boolean; // チャットが処理中かどうか
 };
 export default function HistoryView({ isBusy = true }: ViewProps) {
-  const { currentId, history, admin, customer, answers } = useContexts();
+  const { currentId, history, admin, customer, answers } = useChatContexts();
 
   return (
     <Box

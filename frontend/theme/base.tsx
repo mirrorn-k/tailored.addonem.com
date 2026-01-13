@@ -1,8 +1,10 @@
 "use client";
+import { useMemo } from "react";
 import {
   createTheme,
   ThemeProvider,
   responsiveFontSizes,
+  ThemeOptions,
 } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import "@fontsource/shippori-mincho";
@@ -67,12 +69,19 @@ const theme2 = createTheme({
 export const baseTheme = responsiveFontSizes(theme2);
 
 interface ThemeProps {
+  options: ThemeOptions;
   children: React.ReactNode;
 }
 
-const BaseThemeProvider: React.FC<ThemeProps> = ({ children }) => {
+const BaseThemeProvider: React.FC<ThemeProps> = ({ options, children }) => {
+  // themeをuseMemoで生成
+  const mergedTheme = useMemo(
+    () => responsiveFontSizes(createTheme(baseTheme, options)),
+    [options]
+  );
+
   return (
-    <ThemeProvider theme={baseTheme}>
+    <ThemeProvider theme={mergedTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>

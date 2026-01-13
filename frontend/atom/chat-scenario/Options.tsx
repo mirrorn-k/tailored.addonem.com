@@ -2,7 +2,8 @@
 "use client";
 
 import * as React from "react";
-import { Grid, Button } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import { Button } from "@mui/material";
 import { Stack, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useArrayList } from "@/lib/useReducer/customHook";
