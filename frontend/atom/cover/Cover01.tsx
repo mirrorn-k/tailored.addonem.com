@@ -1,35 +1,52 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import React from "react";
-import { tCoverProps } from "./type";
+import { Phase, tCoverState } from "@/atom/cover/type";
 
-export default function Cover({ state, isActive, duration }: tCoverProps) {
+type Props = {
+  phase: Phase;
+  duration: number;
+  state: tCoverState | null;
+  onCoverOutComplete?: () => void;
+};
+
+export default function Cover01({
+  phase,
+  duration,
+  state,
+  onCoverOutComplete,
+}: Props) {
+  if (phase !== "cover-in" && phase !== "covered" && phase !== "cover-out") {
+    return null;
+  }
+
   return (
-    <AnimatePresence>
-      {isActive && (
-        <motion.div
-          key="cover-index"
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "-100%" }}
-          transition={{ duration, ease: "easeInOut" }} // ← Contextから取得
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "black",
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "white",
-            fontSize: "2rem",
-            backgroundColor: "black",
-          }}
-        >
-          {state?.title}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <motion.div
+      key="cover01"
+      initial={{ x: "100%" }} // 右から入る
+      animate={{
+        x: phase === "cover-in" ? 0 : phase === "cover-out" ? "-100%" : 0,
+      }}
+      transition={{ duration, ease: "easeInOut" }}
+      onAnimationComplete={() => {
+        if (phase === "cover-out") {
+          onCoverOutComplete?.();
+        }
+      }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        backgroundColor: "black",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "white",
+        fontSize: "2rem",
+      }}
+    >
+      {state?.title}
+    </motion.div>
   );
 }

@@ -1,8 +1,21 @@
-import { tCoverState } from "@/context/Transition";
+export type Dir = "up" | "down" | "left" | "right";
+
+export type tCoverState = {
+  title?: string;
+  subtitle?: string;
+  imageUrl?: string;
+  payload?: unknown;
+};
+
+export type Phase =
+  | "idle" // 通常表示
+  | "first" // 初回カバー
+  | "cover-in" // カバー侵入中
+  | "covered" // 完全に覆っている
+  | "cover-out"; // カバー退出中
 
 export type tCoverProps = {
-  state?: tCoverState | null;
-  isActive: boolean;
   duration: number;
-  onFinish?: () => void;
+  state?: tCoverState | null;
+  phase: Phase;
 };

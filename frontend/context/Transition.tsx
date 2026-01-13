@@ -3,33 +3,29 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
   useCallback,
+  useEffect,
 } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box } from "@mui/material";
 import CoverSelecter from "@/atom/cover/Index";
-import { useRouter } from "next/navigation";
+import { tCoverState, Dir, Phase } from "@/atom/cover/type";
+
 /* =========================
  * 型
  * ========================= */
-export type Dir = "up" | "down" | "left" | "right";
-
-export type tCoverState = {
-  title?: string;
-  subtitle?: string;
-  imageUrl?: string;
-  payload?: unknown;
-};
 
 type TransitionContextType = {
-  startTransition: (arg01: string, arg02?: tCoverState, arg03?: number) => void;
-  isFirstLoad: boolean;
+  startTransition: (
+    href: string,
+    state?: tCoverState,
+    duration?: number
+  ) => void;
 
-  isTransitioning: boolean;
+  phase: Phase;
 
   nextDir: Dir;
   setNextDir: React.Dispatch<React.SetStateAction<Dir>>;
@@ -37,10 +33,11 @@ type TransitionContextType = {
   duration: number;
   setDuration: React.Dispatch<React.SetStateAction<number>>;
 
+  coverState: tCoverState | null;
+  setCoverState: React.Dispatch<React.SetStateAction<tCoverState | null>>;
+
   displayTime: number;
   setDisplayTime: React.Dispatch<React.SetStateAction<number>>;
-
-  setCoverState: React.Dispatch<React.SetStateAction<tCoverState | null>>;
 };
 
 const TransitionContext = createContext<TransitionContextType | null>(null);
@@ -48,6 +45,7 @@ const TransitionContext = createContext<TransitionContextType | null>(null);
 /* =========================
  * Provider
  * ========================= */
+
 export function TransitionProvider({
   children,
 }: {
@@ -56,35 +54,29 @@ export function TransitionProvider({
   const pathname = usePathname();
   const router = useRouter();
 
-  const [prevPathname, setPrevPathname] = useState<string | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(true);
-
-  // 公開する state
-  const [nextDir, setNextDir] = useState<Dir>("right");
-  const [duration, setDuration] = useState(1.0);
-  const [coverState, setCoverState] = useState<tCoverState | null>(null);
-
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-
-  const [displayTime, setDisplayTime] = useState(1.0);
+  /* =========================
+   * Ref（一時保持・副作用用）
+   * ========================= */
+  const pendingHref = React.useRef<string | null>(null);
 
   /* =========================
-   * ページ遷移検知（Next/Link）
+   * State
    * ========================= */
-  useEffect(() => {
-    if (prevPathname === pathname) return;
+  const [phase, setPhase] = useState<Phase>("first");
 
-    // 初回ロードはアニメーションしない
-    if (prevPathname !== null) {
-      setIsTransitioning(true);
-    }
+  const [nextDir, setNextDir] = useState<Dir>("right");
+  const [duration, setDuration] = useState<number>(1.0);
 
-    setPrevPathname(pathname);
-  }, [pathname, prevPathname]);
+  const [coverState, setCoverState] = useState<tCoverState | null>(null);
+  const [displayTime, setDisplayTime] = useState<number>(1);
 
-  /* motion 用 */
+  /* =========================
+   * axis / direction
+   * ========================= */
+
   const axis = nextDir === "up" || nextDir === "down" ? "y" : "x";
-  const from =
+
+  const pageExit =
     nextDir === "left"
       ? "100%"
       : nextDir === "right"
@@ -92,69 +84,114 @@ export function TransitionProvider({
       : nextDir === "up"
       ? "100%"
       : "-100%";
-  const to = from.startsWith("-") ? "100%" : "-100%";
 
-  /**
-   * ページ遷移処理
-   */
+  const pageEnter =
+    typeof pageExit === "string" && pageExit.startsWith("-") ? "100%" : "-100%";
+
+  /* =========================
+   * startTransition
+   * ========================= */
   const startTransition = useCallback(
-    (href: string, valContent?: tCoverState, valDura?: number) => {
-      if (isTransitioning) return;
+    (href: string, state?: tCoverState, dura?: number) => {
+      if (phase !== "idle") return;
 
-      setIsTransitioning(true);
+      if (state) setCoverState(state);
+      if (dura) setDuration(dura);
 
-      if (valContent) {
-        setCoverState(valContent);
-      }
-
-      if (valDura) {
-        setDuration(valDura);
-      }
-
-      // カバーが中央に来たタイミングで遷移
-      setTimeout(() => {
-        router.push(href);
-      }, ((valDura ?? duration) * 1000) / 2);
+      pendingHref.current = href;
+      setPhase("cover-in");
     },
-    [isTransitioning, setIsTransitioning, setCoverState, setDuration, duration]
+    [phase]
   );
+
+  /* =========================
+   * Context value
+   * ========================= */
 
   const value = useMemo(
     () => ({
       startTransition,
-      isFirstLoad,
-      isTransitioning,
+      phase,
       nextDir,
       setNextDir,
       duration,
       setDuration,
-      displayTime,
-      setDisplayTime,
       coverState,
       setCoverState,
-    }),
-    [
-      startTransition,
-      isFirstLoad,
-      isTransitioning,
       displayTime,
       setDisplayTime,
-      nextDir,
-      duration,
-      coverState,
-    ]
+    }),
+    [startTransition, phase, nextDir, duration, coverState]
   );
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
+    switch (phase) {
+      case "first": {
+        timer = setTimeout(() => {
+          setPhase("idle");
+        }, duration * 1000);
+        break;
+      }
+
+      case "cover-in": {
+        timer = setTimeout(() => {
+          setPhase("covered");
+        }, duration * 1000);
+        break;
+      }
+
+      case "covered": {
+        if (pendingHref.current) {
+          router.push(pendingHref.current);
+          pendingHref.current = null;
+        }
+
+        timer = setTimeout(() => {
+          setPhase("cover-out");
+        }, displayTime * 1000);
+        break;
+      }
+
+      case "cover-out": {
+        timer = setTimeout(() => {
+          setCoverState(null);
+          setPhase("idle");
+        }, duration * 1000);
+        break;
+      }
+
+      case "idle":
+      default:
+        // なにもしない
+        break;
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [phase]);
+
+  /* =========================
+   * Render
+   * ========================= */
 
   return (
     <TransitionContext.Provider value={value}>
       <Box
         sx={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}
       >
+        {/* ========= ページ ========= */}
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}
-            initial={{ [axis]: 0 }}
-            animate={{ [axis]: isTransitioning ? to : 0 }}
+            initial={{
+              [axis]: phase === "cover-out" ? pageEnter : 0,
+            }}
+            animate={{
+              [axis]: phase === "cover-in" ? pageExit : 0,
+            }}
             transition={{ duration, ease: "easeInOut" }}
             style={{
               position: "absolute",
@@ -167,15 +204,14 @@ export function TransitionProvider({
           </motion.div>
         </AnimatePresence>
 
+        {/* ========= カバー ========= */}
         <CoverSelecter
-          isFirst={isFirstLoad}
-          state={coverState}
-          isActive={isTransitioning}
+          phase={phase}
           duration={duration}
-          displayTime={displayTime}
-          onFinish={() => {
-            setIsFirstLoad(false);
-            setIsTransitioning(false);
+          state={coverState}
+          onCoverOutComplete={() => {
+            setPhase("idle");
+            setCoverState(null);
           }}
         />
       </Box>
@@ -186,6 +222,7 @@ export function TransitionProvider({
 /* =========================
  * Hook
  * ========================= */
+
 export function useTransition() {
   const ctx = useContext(TransitionContext);
   if (!ctx) {

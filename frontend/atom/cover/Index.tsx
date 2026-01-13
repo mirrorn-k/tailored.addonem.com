@@ -1,34 +1,49 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
-import React, { useEffect } from "react";
-import First from "@/atom/cover/First";
-import { tCoverProps } from "./type";
+import React from "react";
+import FirstCover from "@/atom/cover/First";
 import Cover01 from "@/atom/cover/Cover01";
+import { Phase, tCoverState } from "@/atom/cover/type";
 
-export default function Cover(
-  props: tCoverProps & {
-    isFirst: boolean;
-    displayTime: number;
-    onFinish?: () => void;
-  }
-) {
-  const { isFirst, isActive, displayTime, onFinish } = props;
+type Props = {
+  phase: Phase;
+  duration: number;
+  state: tCoverState | null;
+  onCoverOutComplete?: () => void;
+};
 
-  useEffect(() => {
-    if (!isActive) return;
-
-    const timer = setTimeout(() => {
-      onFinish?.(); // ← フラグを折る
-    }, displayTime * 1000);
-
-    return () => clearTimeout(timer);
-  }, [isActive, displayTime, onFinish]);
-
+export default function CoverSelecter({
+  phase,
+  duration,
+  state,
+  onCoverOutComplete,
+}: Props) {
   return (
-    <AnimatePresence>
-      <First {...props} />
-      {!isFirst && <Cover01 {...props} />}
+    <AnimatePresence
+      onExitComplete={() => {
+        // cover-out が終わった瞬間だけ idle に戻す
+        if (phase === "cover-out") {
+          onCoverOutComplete?.();
+        }
+      }}
+    >
+      {/* 初回表示 */}
+      {phase === "first" && (
+        <FirstCover key="cover-first" state={state} duration={duration} />
+      )}
+
+      {/* 通常遷移用カバー */}
+      {(phase === "cover-in" ||
+        phase === "covered" ||
+        phase === "cover-out") && (
+        <Cover01
+          key="cover-main"
+          phase={phase}
+          state={state}
+          duration={duration}
+        />
+      )}
     </AnimatePresence>
   );
 }
