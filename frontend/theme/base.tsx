@@ -28,10 +28,12 @@ const theme1 = createTheme({
     h3: {
       fontFamily: `'Shippori Mincho', sans-serif`,
       letterSpacing: "0.1em",
+      fontSize: "2.2rem",
     },
     h4: {
       fontFamily: `'Shippori Mincho', sans-serif`,
       letterSpacing: "0.1em",
+      fontSize: "2rem",
     },
     h5: {
       fontFamily: `'Shippori Mincho', sans-serif`,

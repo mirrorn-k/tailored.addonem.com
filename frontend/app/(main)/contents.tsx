@@ -1,33 +1,40 @@
 "use client";
-
 import { Box } from "@mui/material";
+import { useContents } from "@/context/Common";
 import Marquee from "@/atom/marquee/Index";
 import MarqueeVertical from "@/atom/marquee/Vertical";
 import { useTheme } from "@mui/material/styles";
 
-const MessageBox = () => {
+export const MarqueeMessage = () => {
+  const { screenSize } = useContents();
+
   return (
     <Box
       sx={{
-        position: "absolute",
+        position: "fixed",
         zIndex: 9,
-        height: "100%",
-        width: "100%",
-        maxHeight: "100vh",
+        height: "100vh",
+        width: "100vw",
         display: "flex",
         flexDirection: "column",
         pointerEvents: "none", // ← ★ これで下の要素にイベントが通る
       }}
     >
-      <WelcomeMessage />
-      <BeybeyMessage />
-      <NoticeMessage />
-      <Notice2Message />
+      {["sm", "md", "lg", "xl"].includes(screenSize) && (
+        <>
+          <NoticeMessage />
+          <Notice2Message />
+        </>
+      )}
+      {["lg", "xl"].includes(screenSize) && (
+        <>
+          <WelcomeMessage />
+          <BeybeyMessage />
+        </>
+      )}
     </Box>
   );
 };
-
-export default MessageBox;
 
 const WelcomeMessage = () => {
   const theme = useTheme();

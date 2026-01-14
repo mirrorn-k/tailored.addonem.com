@@ -7,6 +7,7 @@ import BaseThemeProvider from "@/theme/Base";
 import { CssBaseline } from "@mui/material";
 import * as GtmScript from "@/component/google/GtmScript";
 import { getSite } from "@/lib/api/site/index";
+import { getPages } from "@/lib/api/page/index";
 import { Metadata } from "next";
 import Script from "next/script";
 import { TransitionProvider } from "@/context/Transition";
@@ -76,42 +77,6 @@ export default async function RootLayout({
   );
 }
 
-/*
-async function AsyncLayoutContent({
-  organize,
-  children,
-}: {
-  organize: tOrganize | null;
-  children: React.ReactNode;
-}) {
-  return (
-    <body className="bg-white text-black">
-      <Suspense fallback={<Loading />}>
-        <CssBaseline />
-        {organize?.gtm_tag && <GtmScript.Body tag={organize.gtm_tag} />}
-        <Header />
-        <Box
-          component="main"
-          sx={{
-            m: "auto",
-            p: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          {children}
-        </Box>
-        <Footer />
-        <MenuModal />
-        <ContactModal />
-      </Suspense>
-    </body>
-  );
-}
-*/
-
 async function api() {
   try {
     // 並列で取得（最速化）
@@ -121,7 +86,16 @@ async function api() {
       getSite(),
     ]);
 
-    return { organize, options, site };
+    // 取得したサイト情報をもとにページ群を取得
+    const [pages] = await Promise.all([getPages(site.uuid)]);
+
+    console.log("[layout] organize, options, site, pages:", {
+      organize,
+      options,
+      site,
+      pages,
+    });
+    return { organize, options, site, pages };
   } catch (e) {
     console.error("API ERROR IN LAYOUT:", e);
     throw e; // ← build を確実に止める

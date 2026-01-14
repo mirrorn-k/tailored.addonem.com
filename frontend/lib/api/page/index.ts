@@ -13,10 +13,11 @@ import { tParams, tResponsiveMedia } from "@/types/ttnouMap";
  * SSR/SSG 用：ページ情報を取得
  */
 export async function getPages(
+  siteUuid: string,
   terms?: tParams<{ slug?: string }>
 ): Promise<tPage[]> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_MAP_API_PAGE}?${process.env.NEXT_PUBLIC_MAP_API_PAGE_PARAMS}`;
+    const url = `${process.env.NEXT_PUBLIC_MAP_API_PAGE}?filter[site_uuid]=${siteUuid}&${process.env.NEXT_PUBLIC_MAP_API_PAGE_PARAMS}`;
     const u = fetchWithParams<{ slug?: string }>(url, terms);
 
     const data: tPageApiResponce[] = await getFetch(u);

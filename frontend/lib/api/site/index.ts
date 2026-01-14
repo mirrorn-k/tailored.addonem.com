@@ -9,7 +9,7 @@ export async function getSite(
   terms?: tParams<{ slug?: string }>
 ): Promise<tSite> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_MAP_API_SITE}?${process.env.NEXT_PUBLIC_MAP_API_SITE_PARAMS}`;
+    const url = `${process.env.NEXT_PUBLIC_MAP_API_SITE}?filter[url]=${process.env.NEXT_PUBLIC_APP_URL}&${process.env.NEXT_PUBLIC_MAP_API_SITE_PARAMS}`;
     const u = fetchWithParams<{ slug?: string }>(url, terms);
 
     const data: tSite[] = await getFetch(u);

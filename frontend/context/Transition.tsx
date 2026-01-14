@@ -11,6 +11,7 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import CoverSelecter from "@/atom/cover/Index";
 import { tCoverState, Dir, Phase } from "@/atom/cover/type";
+import { Box } from "@mui/material";
 
 /* =========================
  * 型
@@ -60,13 +61,13 @@ export function TransitionProvider({
   /* =========================
    * State
    * ========================= */
-  const [phase, setPhase] = useState<Phase>("first");
+  const [phase, setPhase] = useState<Phase>("idle");
 
   const [nextDir, setNextDir] = useState<Dir>("right");
-  const [duration, setDuration] = useState<number>(1.0);
+  const [duration, setDuration] = useState<number>(0.5);
 
   const [coverState, setCoverState] = useState<tCoverState | null>(null);
-  const [displayTime, setDisplayTime] = useState<number>(1);
+  const [displayTime, setDisplayTime] = useState<number>(0); // 0だと即ページ遷移
 
   /* =========================
    * startTransition
@@ -83,6 +84,20 @@ export function TransitionProvider({
     },
     [phase]
   );
+
+  const checkDispCover = useCallback(() => {
+    if (displayTime <= 0) {
+      // 即ページ遷移
+      if (pendingHref.current) {
+        router.push(pendingHref.current);
+        pendingHref.current = null;
+      }
+      setPhase("idle");
+      return false;
+    }
+
+    return true;
+  }, [displayTime]);
 
   /* =========================
    * Context value
@@ -106,6 +121,8 @@ export function TransitionProvider({
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
+
+    checkDispCover();
 
     switch (phase) {
       case "first": {
@@ -158,10 +175,17 @@ export function TransitionProvider({
    */
   useEffect(() => {
     // 初回マウント時に first フェーズをセット
-    if (phase === "idle") {
+    if (checkDispCover() && phase === "idle") {
       setPhase("first");
     }
   }, [pathname]);
+
+  useEffect(() => {
+    // 初回マウント時に first フェーズをセット
+    if (checkDispCover()) {
+      setPhase("first");
+    }
+  }, []);
 
   /* =========================
    * Render
@@ -169,7 +193,15 @@ export function TransitionProvider({
 
   return (
     <TransitionContext.Provider value={value}>
-      {children}
+      <Box
+        sx={{
+          display: "contents",
+          opacity: phase === "cover-in" || phase === "covered" ? 0 : 1,
+          transition: `opacity ${duration + 1}s ease`,
+        }}
+      >
+        {children}
+      </Box>
       {/* ========= カバー ========= */}
       <CoverSelecter
         phase={phase}

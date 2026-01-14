@@ -1,4 +1,4 @@
-import { tMedia, tResponsiveMedia } from "@/types/ttnouMap";
+import { tMedia } from "@/types/ttnouMap";
 
 export type tPage = {
   uuid: string;
@@ -14,39 +14,21 @@ export type tPage = {
 
 export type tPageContent =
   | ({ type: "content01" } & tContent01)
-  | ({ type: "content02" } & tContent02)
-  | ({ type: "content03" } & tContent03)
-  | ({ type: "content04" } & tContent04);
+  | ({ type: "content02" } & tContent02);
 
 export interface tContent01 {
-  media: tResponsiveMedia | null;
+  title: string;
+  media: tMedia | null;
   caption: string;
   linkHref?: string | null;
   linkText?: string;
 }
 
 export interface tContent02 {
-  media: tResponsiveMedia | null;
+  media: tMedia;
   title: string;
   caption: string;
-  linkHref?: string | null;
-  linkText?: string;
-}
-
-export interface tContent03 {
-  media: tResponsiveMedia | null;
-  title: string;
-  caption: string;
-  linkHref?: string | null;
-  linkText?: string;
-}
-
-export interface tContent04 {
-  title1: string;
-  title2: string;
-  caption: string;
-  linkHref?: string | null;
-  linkText?: string;
+  linkHref?: string;
 }
 
 // ==============================
@@ -67,7 +49,7 @@ export type tKv = {
 
   // 展開後（アクセサで付与）
   logo: tMedia | null;
-  kv: tResponsiveMedia | null;
+  kv: tMedia | null;
 };
 
 // ==============================
@@ -83,7 +65,7 @@ export type tContentItem = {
   label: string;
   type: string;
   raw_value: string | null;
-  content: tMedia | tResponsiveMedia | null;
+  content: tMedia | tMedia | null;
 };
 
 // ==============================
