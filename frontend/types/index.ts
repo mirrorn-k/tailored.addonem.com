@@ -8,3 +8,13 @@ export type tList01 = {
   img?: tMedia;
   released_at: string;
 };
+
+export type tNaviMenu = {
+  uuid: string;
+  title: string;
+};
+
+export type tMenu = {
+  title: string;
+  slug: string;
+};

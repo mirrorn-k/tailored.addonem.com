@@ -11,7 +11,7 @@ interface Props {
 
 export default function Content01(props: Props) {
   return (
-    <Box sx={{ m: 2, p: 2 }}>
+    <Box className="Content01" sx={{ m: 2, p: 2 }}>
       <Typography
         variant="h3"
         component="h2"

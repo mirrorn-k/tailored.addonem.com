@@ -5,11 +5,25 @@ import Marquee from "@/atom/marquee/Index";
 import MarqueeVertical from "@/atom/marquee/Vertical";
 import { useTheme } from "@mui/material/styles";
 
-const MessageBox = () => {
+interface messageProps {
+  message?: string;
+}
+
+export default function MarqueeMessage({
+  right,
+  left,
+  top,
+  down,
+}: {
+  right: messageProps;
+  left: messageProps;
+  top: messageProps;
+  down: messageProps;
+}) {
   return (
     <Box
       sx={{
-        position: "absolute",
+        position: "fixed",
         zIndex: 9,
         height: "100%",
         width: "100%",
@@ -19,22 +33,24 @@ const MessageBox = () => {
         pointerEvents: "none", // ← ★ これで下の要素にイベントが通る
       }}
     >
-      <WelcomeMessage />
-      <BeybeyMessage />
-      <NoticeMessage />
-      <Notice2Message />
+      <Right {...right} />
+      <Left {...left} />
+      <Down {...top} />
+      <Top {...down} />
     </Box>
   );
-};
+}
 
-export default MessageBox;
-
-const WelcomeMessage = () => {
+export const Right = (props: messageProps) => {
   const theme = useTheme();
+
+  if (!props.message) {
+    return null;
+  }
 
   return (
     <Marquee
-      text="Welcome to Our Website!"
+      text={props.message}
       speed={120} // px/秒
       direction="right" // "right" も可
       gap={24} // 文字の後ろに空ける余白
@@ -50,12 +66,16 @@ const WelcomeMessage = () => {
   );
 };
 
-const BeybeyMessage = () => {
+export const Left = (props: messageProps) => {
   const theme = useTheme();
+
+  if (!props.message) {
+    return null;
+  }
 
   return (
     <Marquee
-      text="Good Bey! See You Again!"
+      text={props.message}
       speed={120} // px/秒
       direction="left" // "right" も可
       gap={24} // 文字の後ろに空ける余白
@@ -72,36 +92,50 @@ const BeybeyMessage = () => {
   );
 };
 
-const NoticeMessage = () => {
+export const Down = (props: messageProps) => {
+  const theme = useTheme();
+
+  if (!props.message) {
+    return null;
+  }
+
   return (
     <MarqueeVertical
-      text="只今絶賛ご依頼待ちです！この機会にぜひお問い合わせを！"
+      text={props.message}
       speed={100}
       direction="down" // "down" も可
       gap={24}
       pauseOnHover
-      fontSize="1.5rem"
-      fontWeight={700}
-      color="#222"
       fade={24}
+      fontFamily={theme.typography.body1.fontFamily}
+      fontSize={theme.typography.body1.fontSize}
+      fontWeight={theme.typography.body1.fontWeight}
+      color={theme.palette.text.primary}
       //fadeColor="#fff"
       style={{ height: "100%", position: "absolute", top: 0, left: 0 }} // ← 縦版は高さ指定推奨
     />
   );
 };
 
-const Notice2Message = () => {
+export const Top = (props: messageProps) => {
+  const theme = useTheme();
+
+  if (!props.message) {
+    return null;
+  }
+
   return (
     <MarqueeVertical
-      text="これを見たって言ったら得するかも？！"
+      text={props.message}
       speed={100}
       direction="up" // "down" も可
       gap={24}
       pauseOnHover
-      fontSize="1.5rem"
-      fontWeight={700}
-      color="#222"
       fade={24}
+      fontFamily={theme.typography.body1.fontFamily}
+      fontSize={theme.typography.body1.fontSize}
+      fontWeight={theme.typography.body1.fontWeight}
+      color={theme.palette.text.primary}
       //fadeColor="#fff"
       style={{ height: "100%", position: "absolute", top: 0, right: 0 }} // ← 縦版は高さ指定推奨
     />

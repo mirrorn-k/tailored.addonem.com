@@ -7,7 +7,7 @@ import {
   tPageContent,
   tContentItem,
 } from "./type";
-import { tParams, tResponsiveMedia } from "@/types/ttnouMap";
+import { tMedia, tParams } from "@/types/ttnouMap";
 
 /**
  * SSR/SSG 用：ページ情報を取得
@@ -126,8 +126,10 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
     switch (item.type) {
       case "content01":
         return {
+          uuid: item.uuid,
+          title: (pick("タイトル")?.raw_value as string) ?? "",
           type: "content01",
-          media: (pick("イメージ")?.content as tResponsiveMedia) ?? null,
+          media: (pick("イメージ")?.content as tMedia) ?? null,
           caption: (pick("キャプション")?.raw_value as string) ?? "",
           linkHref: (pick("リンク")?.raw_value as string) ?? null,
           linkText: (pick("リンクラベル")?.raw_value as string) ?? "",
@@ -135,17 +137,20 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
 
       case "content02":
         return {
+          uuid: item.uuid,
           type: "content02",
-          media: (pick("イメージ")?.content as tResponsiveMedia) ?? null,
+          media: (pick("イメージ")?.content as tMedia) ?? null,
           title: (pick("タイトル")?.raw_value as string) ?? "",
           caption: (pick("キャプション")?.raw_value as string) ?? "",
         };
 
       case "content03":
         return {
+          uuid: item.uuid,
           type: "content03",
-          media: (pick("イメージ")?.content as tResponsiveMedia) ?? null,
+          media: (pick("イメージ")?.content as tMedia) ?? null,
           title: (pick("タイトル")?.raw_value as string) ?? "",
+          titleImg: (pick("タイトルイメージ")?.content as tMedia) ?? undefined,
           caption: (pick("キャプション")?.raw_value as string) ?? "",
           linkHref: (pick("リンク")?.raw_value as string) ?? null,
           linkText: (pick("リンクラベル")?.raw_value as string) ?? "",
@@ -153,12 +158,14 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
 
       case "content04":
         return {
+          uuid: item.uuid,
           type: "content04",
-          title1: (pick("タイトル１")?.raw_value as string) ?? "",
-          title2: (pick("タイトル２")?.raw_value as string) ?? "",
-          caption: (pick("キャプション")?.raw_value as string) ?? "",
-          linkHref: (pick("リンク")?.raw_value as string) ?? null,
-          linkText: (pick("リンクラベル")?.raw_value as string) ?? "",
+          title: (pick("タイトル")?.raw_value as string) ?? "",
+          titleImg: (pick("タイトルイメージ")?.content as tMedia) ?? undefined,
+          url: (pick("URL")?.raw_value as string) ?? "",
+          width: (pick("横幅")?.raw_value as string) ?? undefined,
+          height: (pick("高さ")?.raw_value as string) ?? undefined,
+          caution: (pick("注意事項")?.raw_value as string) ?? undefined,
         };
 
       default:

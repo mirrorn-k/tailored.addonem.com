@@ -9,7 +9,7 @@ services:
     working_dir: /app
     env_file:
       - ${ENV_FILE:-./env/prod.env}
-    command: sh -c "npm run build && npm run start"
+    command: npm run start
     volumes:
       # ソースコードはホストと同期
       - ./frontend:/app

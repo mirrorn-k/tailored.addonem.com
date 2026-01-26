@@ -10,20 +10,18 @@ interface Props {
   linkHref: string;
 }
 
-export default function Content01(props: Props) {
+export default function Content02(props: Props) {
   return (
-    <Paper sx={{ display: "flex", m: 2, p: 2 }}>
+    <Paper className="Content02" sx={{ display: "flex", m: 4 }}>
       <Box sx={{ flex: 6 }}>
         <Typography
           variant="h3"
           component="h2"
-          color={"primary.contrastText"}
-          bgcolor={"primary.main"}
           sx={{ p: 2, textAlign: "center" }}
         >
           {props.title}
         </Typography>
-        <HtmlText text="ddsfdddddsdssddssd" />
+        <HtmlText text="ddsfdddddsdssddssd" sx={{ m: 1 }} />
       </Box>
       <Box
         sx={{

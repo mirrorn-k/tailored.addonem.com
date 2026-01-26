@@ -1,52 +1,60 @@
 import React from "react";
 import { BaseImage } from "@/atom/media/Image";
 import { tMedia } from "@/types/ttnouMap";
+import Image from "next/image";
+import { IMAGE_DEFAULT } from "@/const/Image";
 
+type NextImageProps = React.ComponentProps<typeof Image>;
 interface MediaImageProps {
-  media: tMedia;
+  media?: tMedia;
   alt?: string;
-  fill?: boolean;
   objectFit?: React.CSSProperties["objectFit"];
-  priority?: boolean;
-  className?: string;
+  fill?: boolean;
+  imgProps?: Omit<NextImageProps, "src" | "alt">;
 }
 
 /**
- * CMS Media 専用 Image ラッパー
+ *
+ * @param param0
+ * @returns
  */
-const MediaImage: React.FC<MediaImageProps> = ({
-  media,
+export default function MediaImage({
+  media = IMAGE_DEFAULT,
   alt,
-  fill = false,
+  imgProps,
   objectFit = "contain",
-  priority = false,
-  className,
-}) => {
+  fill = false,
+}: MediaImageProps) {
   if (!media?.url) return null;
 
-  const commonStyle: React.CSSProperties = {
-    objectFit,
-    maxWidth: fill ? undefined : "100%",
-    maxHeight: fill ? undefined : "100%",
+  const finalImgProps: Omit<NextImageProps, "src" | "alt"> = {
+    ...imgProps,
+    ...(fill ? { fill: true, width: undefined, height: undefined } : {}),
+    style: {
+      objectFit,
+      maxWidth: imgProps?.style?.maxWidth ?? "100%",
+      maxHeight: imgProps?.style?.maxHeight ?? "100%",
+      ...imgProps?.style,
+    },
   };
+
+  // fillじゃない場合のみ、width/height を media の値で補完
+  if (!fill) {
+    if (!finalImgProps.width && media.width) {
+      finalImgProps.width = media.height;
+    }
+    if (!finalImgProps.height && media.height) {
+      finalImgProps.height = media.height;
+    }
+  }
 
   return (
     <BaseImage
       imgProps={{
         src: media.url,
-        alt: alt || media.name || "image",
-        className,
-        priority,
-        ...(fill
-          ? { fill: true }
-          : {
-              width: media.width,
-              height: media.height,
-            }),
-        style: commonStyle,
+        alt: alt || media.name || "alt",
+        ...finalImgProps,
       }}
     />
   );
-};
-
-export default MediaImage;
+}

@@ -14,9 +14,12 @@ export type tPage = {
 
 export type tPageContent =
   | ({ type: "content01" } & tContent01)
-  | ({ type: "content02" } & tContent02);
+  | ({ type: "content02" } & tContent02)
+  | ({ type: "content03" } & tContent03)
+  | ({ type: "content04" } & tContent04);
 
 export interface tContent01 {
+  uuid: string;
   title: string;
   media: tMedia | null;
   caption: string;
@@ -25,10 +28,31 @@ export interface tContent01 {
 }
 
 export interface tContent02 {
+  uuid: string;
   media: tMedia;
   title: string;
   caption: string;
   linkHref?: string;
+}
+
+export interface tContent03 {
+  uuid: string;
+  media: tMedia;
+  title: string;
+  titleImg?: tMedia;
+  caption: string;
+  linkText?: string;
+  linkHref?: string;
+}
+
+export interface tContent04 {
+  uuid: string;
+  title: string;
+  titleImg?: tMedia;
+  url: string;
+  width?: string;
+  height?: string;
+  caution?: string;
 }
 
 // ==============================
@@ -56,6 +80,7 @@ export type tKv = {
 // content3（TemplateBase01）
 // ==============================
 export type tContent = {
+  uuid: string;
   name: string;
   type: string;
   content_items: tContentItem[];
