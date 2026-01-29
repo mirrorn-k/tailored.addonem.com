@@ -32,7 +32,7 @@ export type tSite = {
 
   // リレーション
   favicon: tMedia | null;
-  logo: tMedia | null;
+  logo_full: tMedia | null;
   logo_square: tMedia | null;
   logo_horizontal: tMedia | null;
 

@@ -2,37 +2,27 @@ import Header from "@/component/Header";
 import Box from "@mui/material/Box";
 import MarqueeMessage from "@/component/marquee/Message";
 import FooterSelecter from "@/component/footer/Index";
-import { tPage } from "@/lib/api/page/type";
 import { tOrganize } from "@/lib/api/organize/type";
 import { tSite } from "@/lib/api/site/type";
-import { tMenu, tNaviMenu } from "@/types/index";
+import { tMenu, tContentMenu } from "@/types/index";
 
 const HEADER_WIDTH = { md: "280px", lg: "340px", xl: "400px" };
 
 interface ClientLayoutProps {
   organize?: tOrganize;
-  pages?: tPage[];
-  page: tPage;
   site: tSite;
+  pageMenus: tMenu[];
+  contentMenus: tContentMenu[];
   children: React.ReactNode;
 }
 
 export default function Layout({
   organize,
-  pages = [],
-  page,
   site,
+  pageMenus,
+  contentMenus,
   children,
 }: ClientLayoutProps) {
-  // pageからタイトルを取得し{uuid: title}の形で配列にする
-  const pageMenus: tNaviMenu[] = page?.contents.map((content) => {
-    return { uuid: content.uuid, title: content.title };
-  });
-
-  const menus: tMenu[] = pages?.map((p) => {
-    return { title: p.name, slug: p.slug };
-  });
-
   return (
     <>
       <MarqueeMessage
@@ -43,9 +33,12 @@ export default function Layout({
       />
       <Header
         width={HEADER_WIDTH}
-        menus={pageMenus}
+        menus={contentMenus}
         logo={
-          site.logo ?? site.logo_horizontal ?? site.logo_square ?? undefined
+          site.logo_full ??
+          site.logo_horizontal ??
+          site.logo_square ??
+          undefined
         }
       />
       <Box
@@ -80,7 +73,7 @@ export default function Layout({
         <FooterSelecter
           footer={site["footer"]}
           organize={organize}
-          menus={menus}
+          menus={pageMenus}
         />
       </Box>
     </>

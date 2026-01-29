@@ -14,7 +14,6 @@ export async function getSite(
 
     const data: tSite[] = await getFetch(u);
 
-    console.log("[getSite] data:", data);
     return data[0];
   } catch (e) {
     console.error("[getSite] fetch error", e);

@@ -20,7 +20,6 @@ export default function Content03(props: Props) {
       <Typography
         variant="h3"
         component="h2"
-        color={"primary.contrastText"}
         sx={{
           p: 2,
           textAlign: "center",

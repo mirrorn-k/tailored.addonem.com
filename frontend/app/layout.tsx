@@ -2,12 +2,10 @@
 import "./globals.css";
 import * as ContextCommon from "@/context/Common";
 import getThemeOptions from "@/lib/api/themeOption/index";
-import getOrganize from "@/lib/api/organize/index";
 import BaseThemeProvider from "@/theme/Base";
 import { CssBaseline } from "@mui/material";
 import * as GtmScript from "@/component/google/GtmScript";
 import { getSite } from "@/lib/api/site/index";
-import { getPages } from "@/lib/api/page/index";
 import { Metadata } from "next";
 import Script from "next/script";
 import { TransitionProvider } from "@/context/Transition";
@@ -23,11 +21,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // ✅ 共通データの取得
-  const { organize, options, site } = await api();
-
-  if (!organize) {
-    return <p>準備中</p>;
-  }
+  const { options, site } = await api();
 
   return (
     <html lang="ja">
@@ -80,22 +74,9 @@ export default async function RootLayout({
 async function api() {
   try {
     // 並列で取得（最速化）
-    const [organize, options, site] = await Promise.all([
-      getOrganize(),
-      getThemeOptions(),
-      getSite(),
-    ]);
+    const [options, site] = await Promise.all([getThemeOptions(), getSite()]);
 
-    // 取得したサイト情報をもとにページ群を取得
-    const [pages] = await Promise.all([getPages(site.uuid)]);
-
-    console.log("[layout] organize, options, site, pages:", {
-      organize,
-      options,
-      site,
-      pages,
-    });
-    return { organize, options, site, pages };
+    return { options, site };
   } catch (e) {
     console.error("API ERROR IN LAYOUT:", e);
     throw e; // ← build を確実に止める

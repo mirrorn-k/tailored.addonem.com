@@ -8,6 +8,10 @@ export default async function getTheme(): Promise<ThemeOptions> {
       `${process.env.NEXT_PUBLIC_MAP_API_THEME}`
     );
 
+    if (!dataSetting) {
+      return {};
+    }
+
     return convert(dataSetting);
   } catch (e) {
     console.error("[getTheme] fetch error", e);

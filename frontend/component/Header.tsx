@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { tNaviMenu } from "@/types/index";
+import { tContentMenu } from "@/types/index";
 import ElementWrapper, { LinkWrapper } from "@/atom/ScrollElementWrapper";
 import { tMedia } from "@/types/ttnouMap";
 import MediaImage from "@/component/media/Index";
@@ -7,7 +7,7 @@ import MediaImage from "@/component/media/Index";
 interface HeaderProps {
   logo?: tMedia;
   width: { md: string; lg: string; xl: string };
-  menus: tNaviMenu[];
+  menus: tContentMenu[];
 }
 const Mian = (props: HeaderProps) => {
   return (

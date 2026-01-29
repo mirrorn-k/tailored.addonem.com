@@ -15,8 +15,6 @@ export default function Content01(props: Props) {
       <Typography
         variant="h3"
         component="h2"
-        color={"primary.contrastText"}
-        bgcolor={"primary.main"}
         sx={{ p: 2, textAlign: "center" }}
       >
         {props.title}

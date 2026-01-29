@@ -16,7 +16,7 @@ export default async function getFetch(
    * ✅ URL 検査（build / runtime 共通）
    * ============================ */
   if (!url || typeof url !== "string") {
-    console.warn("[getFetch] skip: url is empty or invalid", url);
+    console.warn(`[getFetch] skip: url is empty or invalid ${url}`);
     return null;
   }
 
@@ -24,8 +24,7 @@ export default async function getFetch(
   try {
     new URL(url.startsWith("http") ? url : `http://${url}`);
   } catch {
-    console.warn("[getFetch] skip: invalid url format", url);
-    return null;
+    throw new Error(`[getFetch] skip: invalid url format ${url}`);
   }
 
   if (!options.next) {

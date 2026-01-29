@@ -9,12 +9,13 @@ export type tList01 = {
   released_at: string;
 };
 
-export type tNaviMenu = {
+export type tContentMenu = {
   uuid: string;
   title: string;
 };
 
 export type tMenu = {
+  uuid: string;
   title: string;
   slug: string;
 };
