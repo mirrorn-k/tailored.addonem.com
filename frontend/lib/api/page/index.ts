@@ -5,9 +5,11 @@ import {
   tSetting,
   tKv,
   tPageContent,
+  tMarqueeMessages,
   tContentItem,
 } from "./type";
 import { tMedia, tParams } from "@/types/ttnouMap";
+import { INIT_MARQUEE_MESSAGE } from "./const";
 
 /**
  * SSR/SSG 用：ページ情報を取得
@@ -17,7 +19,18 @@ export async function getPages(
   terms?: tParams<{ slug?: string }>
 ): Promise<tPage[]> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_MAP_API_PAGE}?filter[site_uuid]=${siteUuid}&${process.env.NEXT_PUBLIC_MAP_API_PAGE_PARAMS}`;
+    const base = process.env.NEXT_PUBLIC_MAP_API_PAGE;
+    const params = process.env.NEXT_PUBLIC_MAP_API_PAGE_PARAMS ?? "";
+
+    if (!base || !params) {
+      console.warn("[getPages] API env missing, skip fetch");
+      return [];
+    }
+
+    const url = `${base}?filter[site_uuid]=${siteUuid}&${params}`;
+
+    console.log("getPage url", url);
+
     const u = fetchWithParams<{ slug?: string }>(url, terms);
 
     const data: tPageApiResponce[] = await getFetch(u);
@@ -49,12 +62,19 @@ export async function getPage(siteUuid: string, slug: string): Promise<tPage> {
     const terms: tParams<{ site_uuid: string; slug?: string }> = {
       filter: { site_uuid: siteUuid, slug },
     };
-    const url = `${process.env.NEXT_PUBLIC_MAP_API_PAGE}?${process.env.NEXT_PUBLIC_MAP_API_PAGE_PARAMS}`;
-    const u = fetchWithParams<{ site_uuid: string; slug?: string }>(url, terms);
 
+    const base = process.env.NEXT_PUBLIC_MAP_API_PAGE;
+    const params = process.env.NEXT_PUBLIC_MAP_API_PAGE_PARAMS;
+
+    if (!base || !params) {
+      console.warn("[getPages] API env missing, skip fetch");
+      return {} as tPage;
+    }
+    const url = `${base}?${params}`;
+
+    const u = fetchWithParams<{ site_uuid: string; slug?: string }>(url, terms);
     const data: tPageApiResponce[] = await getFetch(u);
 
-    console.log("[getPage] data:", data);
     return convert(data[0]);
   } catch (e) {
     console.error("[getPages] fetch error", e);
@@ -83,6 +103,7 @@ async function convert(res: tPageApiResponce): Promise<tPage> {
       catchcopy: "",
     },
     contents: [],
+    marqueeMessages: {},
   };
 
   // ページ設定について
@@ -101,6 +122,12 @@ async function convert(res: tPageApiResponce): Promise<tPage> {
   const content3 = res.content3;
   if (content3) {
     obj.contents = convertContent3(content3);
+  }
+
+  // 表示コンテンツについて
+  const content4 = res.content4;
+  if (content4) {
+    obj.marqueeMessages = convertContent4(content4);
   }
 
   return obj;
@@ -129,12 +156,10 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
       case "content01":
         return {
           uuid: item.uuid,
-          title: (pick("タイトル")?.raw_value as string) ?? "",
           type: "content01",
-          media: (pick("イメージ")?.content as tMedia) ?? null,
+          title: (pick("タイトル")?.raw_value as string) ?? "",
+          titleImg: (pick("タイトルイメージ")?.content as tMedia) ?? undefined,
           caption: (pick("キャプション")?.raw_value as string) ?? "",
-          linkHref: (pick("リンク")?.raw_value as string) ?? null,
-          linkText: (pick("リンクラベル")?.raw_value as string) ?? "",
         };
 
       case "content02":
@@ -144,6 +169,7 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
           media: (pick("イメージ")?.content as tMedia) ?? null,
           title: (pick("タイトル")?.raw_value as string) ?? "",
           caption: (pick("キャプション")?.raw_value as string) ?? "",
+          linkHref: (pick("リンク")?.raw_value as string) ?? "",
         };
 
       case "content03":
@@ -154,7 +180,7 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
           title: (pick("タイトル")?.raw_value as string) ?? "",
           titleImg: (pick("タイトルイメージ")?.content as tMedia) ?? undefined,
           caption: (pick("キャプション")?.raw_value as string) ?? "",
-          linkHref: (pick("リンク")?.raw_value as string) ?? null,
+          linkHref: (pick("リンク")?.raw_value as string) ?? "",
           linkText: (pick("リンクラベル")?.raw_value as string) ?? "",
         };
 
@@ -174,4 +200,22 @@ function convertContent3(c3: tPageApiResponce["content3"]): tPageContent[] {
         return {} as tPageContent;
     }
   });
+}
+
+function convertContent4(c4: tPageApiResponce["content4"]): tMarqueeMessages {
+  if (!c4 || typeof c4 !== "object") {
+    return {
+      right: INIT_MARQUEE_MESSAGE,
+      left: INIT_MARQUEE_MESSAGE,
+      top: INIT_MARQUEE_MESSAGE,
+      bottom: INIT_MARQUEE_MESSAGE,
+    };
+  }
+
+  return {
+    right: c4.right ?? INIT_MARQUEE_MESSAGE,
+    left: c4.left ?? INIT_MARQUEE_MESSAGE,
+    top: c4.top ?? INIT_MARQUEE_MESSAGE,
+    bottom: c4.bottom ?? INIT_MARQUEE_MESSAGE,
+  };
 }

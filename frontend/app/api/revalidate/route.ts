@@ -1,4 +1,4 @@
-// app/api/revalidate/site/route.ts
+// frontend/api/revalidate/site/route.ts
 import { revalidateTag } from "next/cache";
 import { TAG_FETCH_KEY } from "@/const/fetch";
 

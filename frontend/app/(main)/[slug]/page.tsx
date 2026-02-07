@@ -10,9 +10,16 @@ import { Typography } from "@mui/material";
 import Frame from "@/app/Frame";
 import metaConvert from "@/lib/meta/converter";
 
-export async function generateMetadata() {
+type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: any;
+};
+
+export async function generateMetadata({ params }: Props) {
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug ?? "";
+
   const site = await getSite();
-  const page = await getPage(site.uuid, `/`);
+  const page = await getPage(site.uuid, `/${slug}`);
 
   const merged = { ...site.meta, ...page.meta };
   return metaConvert(merged);
@@ -23,12 +30,18 @@ export async function generateMetadata() {
  *
  * @returns
  */
-export default async function Main() {
-  const { organize, site, page, pageMenus, contentMenus } = await getData(`/`);
+export default async function Main({ params }: Props) {
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug ?? "";
+
+  const { organize, site, page, pageMenus, contentMenus } = await getData(
+    `/${slug}`
+  );
 
   if (!page) {
     return <Typography>Not Found</Typography>;
   }
+
+  console.log("page", page.kv.kv);
 
   return (
     <Frame
@@ -66,8 +79,6 @@ async function getData(slug: string) {
 
     // 現在ページを取得
     const page = pages.find((p) => p.slug === slug);
-
-    console.log("page", page);
 
     // pageからタイトルを取得し{uuid: title}の形で配列にする
     const contentMenus: tContentMenu[] =

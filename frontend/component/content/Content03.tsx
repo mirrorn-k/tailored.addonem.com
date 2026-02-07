@@ -1,6 +1,7 @@
 import { Typography, Box, Paper } from "@mui/material";
 import { tMedia } from "@/types/ttnouMap";
 import MediaImage from "@/component/media/Index";
+import { ArrowLink } from "@/atom/Link";
 
 interface Props {
   title: string;
@@ -23,9 +24,22 @@ export default function Content03(props: Props) {
         sx={{
           p: 2,
           textAlign: "center",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundImage: `url(${props.titleImg?.url})`,
+          position: "relative",
+          overflow: "visible",
+
+          "&::before": {
+            content: "''",
+            position: "absolute",
+            backgroundPosition: "center",
+            backgroundSize: "contain",
+            backgroundRepeat: "no-repeat",
+            backgroundImage: `url(${props.titleImg?.url})`,
+            zIndex: -1,
+            width: "100%",
+            height: "100%",
+            left: 0,
+            top: 0,
+          },
         }}
       >
         {props.title}
@@ -34,7 +48,7 @@ export default function Content03(props: Props) {
       {props.media && (
         <Box
           sx={{
-            mx: 10,
+            mx: 3,
             p: 2,
             flex: 4,
             position: "relative",
@@ -49,7 +63,7 @@ export default function Content03(props: Props) {
         </Box>
       )}
 
-      <Paper sx={{ borderRadius: "unset", m: 6, p: 4 }}>
+      <Paper sx={{ borderRadius: "unset", mx: 3, mt: 2, p: 4 }}>
         <Typography
           variant="body1"
           sx={{
@@ -62,6 +76,20 @@ export default function Content03(props: Props) {
           dangerouslySetInnerHTML={{ __html: props.caption }}
         />
       </Paper>
+      {props.linkHref && (
+        <Box
+          sx={{
+            mx: 3,
+            px: 2,
+            textAlign: "right",
+          }}
+        >
+          <ArrowLink
+            href={props.linkHref}
+            label={props.linkText ?? "詳しくはこちら"}
+          />
+        </Box>
+      )}
     </Box>
   );
 }

@@ -4,22 +4,9 @@ import { Box } from "@mui/material";
 import Marquee from "@/atom/marquee/Index";
 import MarqueeVertical from "@/atom/marquee/Vertical";
 import { useTheme } from "@mui/material/styles";
+import { tMarqueeMessages, tMarqueeMessage } from "@/lib/api/page/type";
 
-interface messageProps {
-  message?: string;
-}
-
-export default function MarqueeMessage({
-  right,
-  left,
-  top,
-  down,
-}: {
-  right: messageProps;
-  left: messageProps;
-  top: messageProps;
-  down: messageProps;
-}) {
+export default function MarqueeMessage(props: tMarqueeMessages) {
   return (
     <Box
       sx={{
@@ -33,15 +20,15 @@ export default function MarqueeMessage({
         pointerEvents: "none", // ← ★ これで下の要素にイベントが通る
       }}
     >
-      <Right {...right} />
-      <Left {...left} />
-      <Down {...top} />
-      <Top {...down} />
+      {props.right && <Right {...props.right} />}
+      {props.left && <Left {...props.left} />}
+      {props.bottom && <Bottom {...props.bottom} />}
+      {props.top && <Top {...props.top} />}
     </Box>
   );
 }
 
-export const Right = (props: messageProps) => {
+export const Top = (props: tMarqueeMessage) => {
   const theme = useTheme();
 
   if (!props.message) {
@@ -66,7 +53,7 @@ export const Right = (props: messageProps) => {
   );
 };
 
-export const Left = (props: messageProps) => {
+export const Bottom = (props: tMarqueeMessage) => {
   const theme = useTheme();
 
   if (!props.message) {
@@ -92,7 +79,7 @@ export const Left = (props: messageProps) => {
   );
 };
 
-export const Down = (props: messageProps) => {
+export const Left = (props: tMarqueeMessage) => {
   const theme = useTheme();
 
   if (!props.message) {
@@ -117,7 +104,7 @@ export const Down = (props: messageProps) => {
   );
 };
 
-export const Top = (props: messageProps) => {
+export const Right = (props: tMarqueeMessage) => {
   const theme = useTheme();
 
   if (!props.message) {

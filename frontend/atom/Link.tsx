@@ -1,10 +1,10 @@
 "use client";
 import MuiLink from "@mui/material/Link";
 import { Typography, Box } from "@mui/material";
-import ArrowIcon from "@/atom/svg/ArrowIcon";
 import { useTheme } from "@mui/material";
 import styled from "@mui/system/styled";
 import { useTransition } from "@/context/Transition";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 type Props = {
   href: string;
@@ -31,18 +31,24 @@ interface MainProps {
   href: string;
   label: string;
   props?: React.ComponentPropsWithoutRef<typeof MuiLink>;
+  children?: React.ReactNode;
 }
 
-export const Main = ({ href, label, props }: MainProps) => {
+export const Main = ({ href, label, props, children }: MainProps) => {
   return (
     <Default href={href}>
       <Typography
-        sx={{ fontSize: "1.25rem" }}
+        sx={{
+          fontSize: "1.25rem",
+          display: "inline-flex",
+          alignItems: "center",
+        }}
         underline="none"
         {...props}
         className={"atom-Link-Main"}
       >
         {label}
+        {children}
       </Typography>
     </Default>
   );
@@ -57,12 +63,12 @@ export const ArrowLink = ({ href, label }: MainProps) => {
         flexFlow: "row nowrap",
         justifyContent: "flex-end",
         alignItems: "center",
-        gap: theme.spacing(2),
+        gap: theme.spacing(0.5),
       }}
     >
-      <Main href={href} label={label} />
-      <ArrowIcon length={50} strokeWidth={1} tipAngle={0} tipLength={0} />
-      {/* 直線に変更 */}
+      <Main href={href} label={label}>
+        <ArrowForwardIosIcon />
+      </Main>
     </Box>
   );
 };

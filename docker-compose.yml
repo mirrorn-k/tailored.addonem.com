@@ -17,3 +17,19 @@ services:
       NODE_ENV: production
       NODE_OPTIONS: "--max-old-space-size=768"
     mem_limit: 1g
+
+  maple:
+    container_name: tempalte_base02_maple
+    ports:
+      - "8271:3000"
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile
+    working_dir: /app
+    env_file:
+      - ${ENV_FILE:-./env/maple.env}
+    command: npm run start
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: "--max-old-space-size=768"
+    mem_limit: 1g

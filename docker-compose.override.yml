@@ -21,3 +21,16 @@ services:
     networks:
       - ttnoumap-net
     mem_limit: 1.5g
+    tty: true
+    stdin_open: true
+
+  maple:
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+    environment:
+      NODE_ENV: development
+      NODE_OPTIONS: "--max-old-space-size=1024"
+    mem_limit: 1.5g
+    tty: true
+    stdin_open: true

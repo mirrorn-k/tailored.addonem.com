@@ -10,6 +10,7 @@ import { tOrganize } from "@/lib/api/organize/type";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import FaxIcon from "@mui/icons-material/Fax";
 import { tSite } from "@/lib/api/site/type";
+import { BeforeMark } from "@/atom/Typography";
 
 interface Props {
   organize?: tOrganize;
@@ -49,33 +50,31 @@ export default function FooterBar({ footer, organize }: Props) {
         }}
       >
         {footer.flgLogo && footer.logo && (
-          <>
-            <MediaImage
-              media={footer.logo}
-              imgProps={{
-                style: {
-                  width: "auto",
-                  height: "auto",
-                  maxWidth: "160px",
-                  maxHeight: "160px",
-                },
-              }}
-            />
-            <Box
-              sx={{
-                width: "100%",
-                borderTop: "1px solid",
-                borderColor: theme.palette.primary.contrastText,
-              }}
-            />
-          </>
+          <MediaImage
+            media={footer.logo}
+            imgProps={{
+              style: {
+                width: "auto",
+                height: "auto",
+                maxWidth: "160px",
+                maxHeight: "160px",
+              },
+            }}
+          />
         )}
 
         <FlexColumnBox gapSize={1}>
-          {footer.flgAddress && organize?.address && (
-            <Typography className="address" variant="h6" align="center">
-              {organize.address}
-            </Typography>
+          {footer.flgAddress && (
+            <>
+              {organize?.postal_code && (
+                <BeforeMark mark="〒" text={organize?.postal_code} />
+              )}
+              {organize?.address && (
+                <Typography className="address" variant="h6">
+                  {organize.address}
+                </Typography>
+              )}
+            </>
           )}
           <FlexBox>
             {footer.flgTel && organize?.tell && (

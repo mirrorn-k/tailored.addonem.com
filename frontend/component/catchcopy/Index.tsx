@@ -8,7 +8,12 @@ export default function Catchcopy(props: CatchcopyProps) {
     <HtmlText
       text={props.text}
       component={"h3"}
-      sx={{ lineHeight: "2.5em", fontSize: "2.0rem", fontWeight: "bold", p: 2 }}
+      sx={{
+        lineHeight: { xs: "1.75em", sm: "2.5em" },
+        fontSize: "2.0rem",
+        fontWeight: "bold",
+        p: 2,
+      }}
     />
   );
 }

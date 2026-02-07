@@ -1,31 +1,56 @@
 import { Typography, Box, Paper } from "@mui/material";
-import { tMedia } from "@/types/ttnouMap";
 import HtmlText from "@/atom/Typography";
 import MediaImage from "@/component/media/Index";
+import Link from "next/link";
+import { tContent02 } from "@/lib/api/page/type";
 
 interface Props {
-  title: string;
-  media: tMedia;
-  caption: string;
-  linkHref: string;
+  title: tContent02["title"];
+  media: tContent02["media"];
+  caption: tContent02["caption"];
+  linkHref?: tContent02["linkHref"];
 }
 
 export default function Content02(props: Props) {
   return (
-    <Paper className="Content02" sx={{ display: "flex", m: 4 }}>
-      <Box sx={{ flex: 6 }}>
+    <Box className="Content02" sx={{ display: "content" }}>
+      {props.linkHref ? (
+        <Link href={props.linkHref}>
+          <Content {...props} />
+        </Link>
+      ) : (
+        <Content {...props} />
+      )}
+    </Box>
+  );
+}
+
+const Content = (props: Props) => {
+  return (
+    <Paper
+      sx={{
+        display: "flex",
+        m: 3,
+        flexDirection: { xs: "column", sm: "row" },
+        gap: 2,
+      }}
+    >
+      <Box sx={{ flex: 5 }}>
         <Typography
           variant="h3"
           component="h2"
-          sx={{ p: 2, textAlign: "center" }}
+          sx={{
+            p: 2,
+            textAlign: "center",
+          }}
         >
           {props.title}
         </Typography>
-        <HtmlText text="ddsfdddddsdssddssd" sx={{ m: 1 }} />
+        <HtmlText text={props.caption} sx={{ m: 1 }} />
       </Box>
       <Box
         sx={{
-          flex: 4,
+          flex: 5,
           position: "relative",
           width: "100%",
           aspectRatio: `${props.media.width} / ${props.media.height}`,
@@ -35,4 +60,4 @@ export default function Content02(props: Props) {
       </Box>
     </Paper>
   );
-}
+};

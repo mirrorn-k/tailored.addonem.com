@@ -5,14 +5,17 @@ import FooterSelecter from "@/component/footer/Index";
 import { tOrganize } from "@/lib/api/organize/type";
 import { tSite } from "@/lib/api/site/type";
 import { tMenu, tContentMenu } from "@/types/index";
+import { tMarqueeMessages } from "@/lib/api/page/type";
+import * as ContextCommon from "@/context/Common";
 
-const HEADER_WIDTH = { md: "280px", lg: "340px", xl: "400px" };
+const HEADER_WIDTH = { xs: "100%", md: "280px", lg: "340px", xl: "400px" };
 
 interface ClientLayoutProps {
   organize?: tOrganize;
   site: tSite;
   pageMenus: tMenu[];
   contentMenus: tContentMenu[];
+  marqueeMessages?: tMarqueeMessages;
   children: React.ReactNode;
 }
 
@@ -21,26 +24,25 @@ export default function Layout({
   site,
   pageMenus,
   contentMenus,
+  marqueeMessages,
   children,
 }: ClientLayoutProps) {
   return (
-    <>
-      <MarqueeMessage
-        right={{ message: "right" }}
-        left={{ message: "left" }}
-        top={{ message: "top" }}
-        down={{ message: "down" }}
-      />
-      <Header
-        width={HEADER_WIDTH}
-        menus={contentMenus}
-        logo={
-          site.logo_full ??
-          site.logo_horizontal ??
-          site.logo_square ??
-          undefined
-        }
-      />
+    <ContextCommon.Provider>
+      {marqueeMessages && <MarqueeMessage {...marqueeMessages} />}
+      {site.header.flgLogo && (
+        <Header
+          width={HEADER_WIDTH}
+          menus={contentMenus}
+          logo={
+            site.header.logo ??
+            site.logo_full ??
+            site.logo_horizontal ??
+            site.logo_square ??
+            undefined
+          }
+        />
+      )}
       <Box
         sx={{
           mr: {
@@ -51,10 +53,13 @@ export default function Layout({
           },
           ml: "auto",
           py: 4,
-          maxWidth: 600,
-          minHeight: "200vh",
+          maxWidth: { xs: "unset", md: 600 },
+          minHeight: "100vh",
           width: "100%",
-          backgroundColor: "blue",
+          boxShadow: `
+            -12px 0 20px rgba(0,0,0,0.25),
+             12px 0 20px rgba(0,0,0,0.25)
+          `,
           display: "flex",
           flexDirection: "column",
           gap: 4,
@@ -76,6 +81,6 @@ export default function Layout({
           menus={pageMenus}
         />
       </Box>
-    </>
+    </ContextCommon.Provider>
   );
 }

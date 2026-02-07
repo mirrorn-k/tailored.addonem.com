@@ -36,7 +36,7 @@ export const DUMMY_SITE: tSite = {
   // =========================
   favicon: IMAGE_DEFAULT,
 
-  logo: IMAGE_DEFAULT,
+  logo_full: IMAGE_DEFAULT,
   logo_square: IMAGE_DEFAULT,
   logo_horizontal: IMAGE_DEFAULT,
 

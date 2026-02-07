@@ -27,9 +27,22 @@ export default function Content04(props: Props) {
         sx={{
           p: 2,
           textAlign: "center",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundImage: `url(${props.titleImg?.url})`,
+          position: "relative",
+          overflow: "visible",
+
+          "&::before": {
+            content: "''",
+            position: "absolute",
+            backgroundPosition: "center",
+            backgroundSize: "contain",
+            backgroundRepeat: "no-repeat",
+            backgroundImage: `url(${props.titleImg?.url})`,
+            zIndex: -1,
+            width: "100%",
+            height: "100%",
+            left: 0,
+            top: 0,
+          },
         }}
       >
         {props.title}

@@ -2,12 +2,16 @@
 
 import { useTheme } from "@mui/material/styles";
 import { Box, Typography, Link } from "@mui/material";
-import ResponsiveBox, { FlexBox } from "@/atom/Box";
 import MediaImage from "@/component/media/Index";
 import React from "react";
 import { tSite } from "@/lib/api/site/type";
 import { tOrganize } from "@/lib/api/organize/type";
 import { tMenu } from "@/types/index";
+import { BeforeMark } from "@/atom/Typography";
+import HtmlText from "@/atom/Typography";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
+import FaxIcon from "@mui/icons-material/Fax";
+import EmailIcon from "@mui/icons-material/Email";
 
 interface Props {
   organize?: tOrganize;
@@ -23,56 +27,110 @@ export default function FooterBar({ footer, organize, menus = [] }: Props) {
       sx={{
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
-        padding: theme.spacing(2, 0),
+        padding: theme.spacing(2, 4),
         marginTop: "auto",
         boxShadow: theme.shadows[4],
       }}
     >
-      <ResponsiveBox
-        maxWidth="lg"
-        margin="0 auto"
-        paddingX={2}
+      <Box
         sx={{
           display: "flex",
-          gap: 4,
           flexDirection: "column",
-          alignItems: "center",
+          width: "100%",
+          gap: 2,
         }}
       >
-        {footer.flgLogo && footer.logo ? (
-          <MediaImage
-            media={footer.logo}
-            imgProps={{ style: { maxWidth: "380px", maxHeight: "280px" } }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            width: "100%",
+            gap: 2,
+          }}
+        >
+          {footer.flgLogo && (
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                maxWidth: { xs: "100%", sm: "200px" },
+                maxHeight: { xs: "380px", sm: "200px" },
+              }}
+            >
+              {footer.logo && <MediaImage media={footer.logo} imgProps={{}} />}
+            </Box>
+          )}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <Typography variant={"h5"}>
+              {organize?.organization_name}
+            </Typography>
+
+            {footer.flgAddress && (
+              <>
+                {organize?.postal_code && (
+                  <BeforeMark mark="〒" text={organize?.postal_code} />
+                )}
+                {organize?.address && (
+                  <Typography className="address" variant="h6">
+                    {organize.address}
+                  </Typography>
+                )}
+              </>
+            )}
+            {footer.flgTel && organize?.tell && (
+              <Typography>
+                <LocalPhoneIcon sx={{ height: "1rem" }} />
+                {organize?.tell}
+              </Typography>
+            )}
+            {footer.flgFax && organize?.fax && (
+              <Typography>
+                <FaxIcon sx={{ height: "1rem" }} />
+                {organize?.fax}
+              </Typography>
+            )}
+            {footer.flgEmail && organize?.email && (
+              <Typography>
+                <EmailIcon sx={{ height: "1rem" }} />
+                {organize?.email}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+        <Box
+          sx={{ display: "flex", flexFlow: "row", flexWrap: "wrap", gap: 4 }}
+        >
+          {menus.map((menu) => (
+            <Link
+              key={`menu-${menu.slug}`}
+              color="inherit"
+              href={`${menu.slug}`}
+            >
+              {menu.title}
+            </Link>
+          ))}
+        </Box>
+        {footer.text && (
+          <HtmlText
+            className="text"
+            sx={{ textAlign: "center" }}
+            text={footer.text || ""}
           />
-        ) : (
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {organize?.organization_name}
-          </Typography>
         )}
-        <FlexBox sx={{ display: "flex", width: "100%" }}>
-          <Box sx={{ flex: 1 }}>
-            <Typography>{organize?.postal_code}</Typography>
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            {menus.map((menu) => (
-              <Link
-                key={`menu-${menu.slug}`}
-                color="inherit"
-                href={`/${menu.slug}`}
-              >
-                {menu.title}
-              </Link>
-            ))}
-          </Box>
-        </FlexBox>
-      </ResponsiveBox>
-      <Typography variant="body2" align="center">
+      </Box>
+      <Typography variant="body2" align="center" sx={{ mt: 4 }}>
         {footer.copyright
           ? footer.copyright
           : `© ${new Date().getFullYear()} addonem llc. All rights reserved.`}
-        <Link href="/privacy" color="inherit">
-          Privacy Policy
-        </Link>
       </Typography>
     </Box>
   );

@@ -14,6 +14,7 @@ export default function Main({ contents }: Props) {
   return (
     <>
       {contents.map((content, index) => {
+        console.log("contents.index", content);
         return (
           <ScrollElementWrapper
             key={`contents-${index}`}
@@ -40,24 +41,17 @@ function Selecter({
         <Content01
           key={`content01-${index}`}
           title={content.title}
-          media={content.media ?? undefined}
+          titleImg={content.titleImg}
           caption={content.caption}
-          linkHref={content.linkHref ?? undefined}
-          linkText={content.linkText ?? undefined}
         />
       );
     case "content02":
-      if (
-        !content.media ||
-        !content.title ||
-        !content.caption ||
-        !content.linkHref
-      ) {
+      if (!content.media || !content.title || !content.caption) {
         console.log("Content02 に必要なデータが不足しています ", content);
         return (
           <Box>
             <Typography variant="h4">
-              Content02 に必要なデータが不足しています{" "}
+              Content02 に必要なデータが不足しています
             </Typography>
           </Box>
         );

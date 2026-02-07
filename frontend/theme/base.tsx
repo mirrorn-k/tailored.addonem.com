@@ -82,6 +82,8 @@ const BaseThemeProvider: React.FC<ThemeProps> = ({ options, children }) => {
     [options]
   );
 
+  console.log("BaseThemeProvider", mergedTheme);
+
   return (
     <ThemeProvider theme={mergedTheme}>
       <CssBaseline />

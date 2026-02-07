@@ -10,6 +10,7 @@ export type tPage = {
   meta: Record<string, string> | null;
   structured_data: Record<string, string | number | boolean | null> | null;
   contents: tPageContent[];
+  marqueeMessages?: tMarqueeMessages;
 };
 
 export type tPageContent =
@@ -21,10 +22,8 @@ export type tPageContent =
 export interface tContent01 {
   uuid: string;
   title: string;
-  media: tMedia | null;
+  titleImg?: tMedia;
   caption: string;
-  linkHref?: string | null;
-  linkText?: string;
 }
 
 export interface tContent02 {
@@ -56,7 +55,7 @@ export interface tContent04 {
 }
 
 // ==============================
-// content1（TemplateBase01）
+// content1（TemplateBase02）
 // ==============================
 export type tSetting = {
   subtitle: string;
@@ -65,7 +64,7 @@ export type tSetting = {
 };
 
 // ==============================
-// content2（TemplateBase01）
+// content2（TemplateBase02）
 // ==============================
 export type tKv = {
   // 元データ（UUID）
@@ -77,7 +76,7 @@ export type tKv = {
 };
 
 // ==============================
-// content3（TemplateBase01）
+// content3（TemplateBase02）
 // ==============================
 export type tContent = {
   uuid: string;
@@ -94,6 +93,20 @@ export type tContentItem = {
 };
 
 // ==============================
+// content4（TemplateBase02）
+// ==============================
+export type tMarqueeMessages = {
+  right?: tMarqueeMessage;
+  left?: tMarqueeMessage;
+  top?: tMarqueeMessage;
+  bottom?: tMarqueeMessage;
+};
+
+export type tMarqueeMessage = {
+  message: string;
+};
+
+// ==============================
 // Page（APIレスポンス）
 // ==============================
 export type tPageApiResponce = {
@@ -107,4 +120,5 @@ export type tPageApiResponce = {
   content1: tSetting | null;
   content2: tKv | null;
   content3: tContent[] | null;
+  content4: tMarqueeMessages;
 };

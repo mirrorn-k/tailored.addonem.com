@@ -7,9 +7,6 @@ export const CONTENTS: tPage["contents"] = [
     type: "content01",
     title: "タイトル",
     caption: "キャッチコピー",
-    linkHref: "https://example.com",
-    linkText: "リンクテキスト",
-    media: IMAGE_DEFAULT,
   },
   {
     uuid: "content-uuid-002",

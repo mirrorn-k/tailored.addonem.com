@@ -1,89 +1,108 @@
-# ========== 開発環境 ==========
-build:
-	docker compose build --parallel
+# =========================
+# PJ 指定（デフォルト develop）
+# =========================
+PJ ?= develop
 
-build-no-cache:
-	docker compose build --no-cache --parallel
+# =========================
+# env/PJ.env は本番専用
+# =========================
+ENV_FILE := env/$(PJ).env
+ENV_OPT := $(if $(wildcard $(ENV_FILE)),--env-file $(ENV_FILE),)
 
-npm-build:
-	docker compose run --rm --entrypoint sh develop -c "npm run build"
-
-up:
-	docker compose up
-
-upd:
-#	docker compose build --parallel
-	docker compose up -d
-
-down:
-	docker compose down
-
-stop:
-	docker compose stop
-
-restart:
-	docker compose restart
-
+# =========================
+# セットアップ
+# =========================
 setup:
-	docker compose run --rm --entrypoint sh develop -c "npm install"
-	docker compose build --parallel
-#	docker compose up
-
-re-start:
-	docker compose down
-	docker compose build --parallel
-	docker compose up
-
-cache-clear:
-	docker compose down --volumes --rmi all --remove-orphans
-
-login:
-	docker compose run --rm app sh
-
-ps:
-	docker compose ps
-
-logs:
-	docker compose logs -f
-
-# ========== 本番環境（override無視） ==========
-prod-build:
-	docker compose -f docker-compose.yml build --parallel
-
-prod-up:
-	docker compose -f docker-compose.yml up
-
-prod-upd:
-	docker compose -f docker-compose.yml build --parallel
-	docker compose -f docker-compose.yml up -d
-
-prod-down:
-	docker compose -f docker-compose.yml down
-
-prod-stop:
-	docker compose -f docker-compose.yml stop
-
-prod-restart:
-	docker compose -f docker-compose.yml restart
+	docker compose run --rm --entrypoint sh frontend -c "npm ci"
 
 prod-setup:
-	docker compose -f docker-compose.yml run --rm --entrypoint sh app -c "npm install"
-	docker compose -f docker-compose.yml build --parallel
-#	docker compose -f docker-compose.yml up
+	COMPOSE_FILE=docker-compose.yml docker compose build develop
+	COMPOSE_FILE=docker-compose.yml docker compose run --rm --entrypoint sh develop -c "npm ci"
+	
+# =========================
+# ローカル（env を使わない）
+# =========================
+up:
+	docker compose up $(PJ)
 
-prod-re-start:
-	docker compose -f docker-compose.yml down
-	docker compose -f docker-compose.yml build --parallel
-	docker compose -f docker-compose.yml up
+upd:
+	docker compose up -d $(PJ)
 
-prod-cache-clear:
-	docker compose -f docker-compose.yml down --volumes --rmi all --remove-orphans
+logs:
+	docker compose logs -f $(PJ)
 
-prod-login:
-	docker compose -f docker-compose.yml run --rm app sh
+down:
+	docker compose stop $(PJ)
 
-prod-ps:
-	docker compose -f docker-compose.yml ps
+build:
+	docker compose build $(PJ)
+
+npm-build:
+	docker compose exec $(PJ) sh -c "npm run build"
+
+# Next.js キャッシュ削除（.next）
+next-cache-clear:
+	docker compose run --rm $(PJ) sh -c "rm -rf .next"
+
+# node_modules の再インストール前に使う
+node-cache:
+	docker compose run --rm $(PJ) sh -c "npm cache clean --force"
+
+# Docker ボリューム/イメージのキャッシュ削除
+docker-cache:
+	docker compose down --volumes --rmi all --remove-orphans
+	docker system prune -f
+
+# =========================
+# 本番（env/PJ.env を使う）
+# =========================
+prod-build:
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) build $(PJ)
+	
+prod-up:
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) up $(PJ)
+
+prod-upd:
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) up -d $(PJ)
 
 prod-logs:
-	docker compose -f docker-compose.yml logs -f
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) logs -f $(PJ)
+
+prod-down:
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) stop $(PJ)
+
+# Next.js のビルドキャッシュ削除（本番）
+prod-next-cache-clear:
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) run --rm $(PJ) sh -c "rm -rf .next"
+
+# Dockerキャッシュ全削除（本番）
+prod-docker-cache:
+	COMPOSE_FILE=docker-compose.yml docker compose $(ENV_OPT) down --volumes --rmi all --remove-orphans
+	COMPOSE_FILE=docker-compose.yml docker system prune -f
+
+
+# =========================
+
+SERVICES := maples
+
+
+# ============================
+# Up
+# ============================
+prod-customer-upd:
+	@for service in $(SERVICES); do \
+		env_file="env/$$service.env"; \
+		echo "=== Up $$service (env: $$env_file) ==="; \
+		COMPOSE_FILE=docker-compose.yml docker compose --env-file $$env_file up -d $$service || exit 1; \
+	done
+
+
+# ============================
+# Down
+# ============================
+prod-customer-down:
+	@for service in $(SERVICES); do \
+		env_file="env/$$service.env"; \
+		echo "=== Down $$service (env: $$env_file) ==="; \
+		COMPOSE_FILE=docker-compose.yml docker compose --env-file $$env_file stop $$service || exit 1; \
+	done
